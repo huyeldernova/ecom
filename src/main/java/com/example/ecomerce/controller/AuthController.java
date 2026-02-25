@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+
 
     @PostMapping("/login")
     @Operation(
@@ -56,6 +59,20 @@ public class AuthController {
                 .code(HttpStatus.OK.value())
                 .message("Login Success")
                 .data(loginResponse)
+                .build();
+    }
+
+
+    @PostMapping("/logout")
+    public ApiResponses<Void> logout(@RequestHeader("Authorization") String authHeader) throws ParseException {
+
+        String token = authHeader.substring(7);
+
+        authService.logout(token);
+
+        return ApiResponses.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Logout Success")
                 .build();
     }
 }

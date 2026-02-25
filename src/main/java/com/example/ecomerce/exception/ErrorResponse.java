@@ -2,6 +2,8 @@ package com.example.ecomerce.exception;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -9,9 +11,9 @@ import lombok.*;
 @Builder
 public class ErrorResponse {
     private int code;
-    private int status;
     private String message;
     private String error;
+    private Date timestamp;
     private String path;
 }
 

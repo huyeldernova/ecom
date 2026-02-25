@@ -1,9 +1,11 @@
 package com.example.ecomerce.exception;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
+@RequiredArgsConstructor
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "Error",  HttpStatus.INTERNAL_SERVER_ERROR),
 
@@ -19,17 +21,15 @@ public enum ErrorCode {
     TOKEN_HAS_BEEN_BLACKLISTED(401, "Token has been blacklisted", HttpStatus.UNAUTHORIZED),
 
     USER_ALDREADY_SUCCESS(401,"user aldreaddy success", HttpStatus.BAD_REQUEST),
+    UNAUTHORIZED(401, "UNAUTHORIZED", HttpStatus.UNAUTHORIZED),
+    ACCESS_DENIED(500, "ACCESS_DENIED", HttpStatus.BAD_REQUEST)
 
     ;
 
     private final int code;
     private final String message;
-    private final HttpStatus httpStatus;
+    private final HttpStatus status;
 
-    ErrorCode(int code, String message, HttpStatus httpStatus) {
-        this.code = code;
-        this.message = message;
-        this.httpStatus = httpStatus;
-    }
+
 
 }

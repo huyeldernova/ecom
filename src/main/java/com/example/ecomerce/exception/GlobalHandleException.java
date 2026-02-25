@@ -1,7 +1,7 @@
 package com.example.ecomerce.exception;
 
 
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -11,50 +11,53 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.Date;
 import java.util.List;
 
 @RestControllerAdvice
 public class GlobalHandleException {
 
-
-
     @ExceptionHandler(AppException.class)
-    ResponseEntity<ErrorResponse> handleAppException(AppException appException, WebRequest request) {
-        ErrorCode errorCode = appException.getErrorCode();
-
+    public ResponseEntity<ErrorResponse> handlerFLearningException(AppException exception, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
-                .code(errorCode.getCode())
-                .status(errorCode.getHttpStatus().value())
-                .message(errorCode.getMessage())
-                .error(errorCode.getHttpStatus().getReasonPhrase())
+                .code(exception.getErrorCode().getCode())
+                .error(exception.getErrorCode().getStatus().getReasonPhrase())
+                .message(exception.getMessage())
+                .timestamp(new Date())
                 .path(request.getDescription(false).replace("uri=", ""))
                 .build();
 
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
-
+        return ResponseEntity.status(exception.getErrorCode().getStatus()).body(response);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handlerMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
+
         BindingResult bindingResult = e.getBindingResult();
 
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
 
-        List<String> errors = fieldErrors.stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .toList();
+        List<String> errors = fieldErrors.stream().map(FieldError::getDefaultMessage).toList();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(new Date())
                 .code(HttpStatus.BAD_REQUEST.value())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message(errors.size() > 1 ? String.join(", ", errors) : errors.get(0))
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(errors.size() > 1 ? String.valueOf(errors) : errors.getFirst())
                 .path(request.getDescription(false).replace("uri=", ""))
                 .build();
 
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
 
-
+//    private ErrorResponse buildErrorCodeResponse(ErrorCode errorCode ,WebRequest request) {
+//        return ErrorResponse.builder()
+//                .timestamp(new Date())
+//                .code(errorCode.getCode())
+//                .message(errorCode.getMessage())
+//                .error(errorCode.getStatus().getReasonPhrase())
+//                .path(request.getDescription(false).replace("uri=", ""))
+//                .build();
+//    }
 }
