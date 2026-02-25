@@ -27,7 +27,7 @@ public class SecurityConfig {
 
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/auth/login"
+            "/auth/**"
     };
 
     @Bean

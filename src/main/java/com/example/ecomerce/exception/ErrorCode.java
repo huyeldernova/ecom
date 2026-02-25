@@ -16,7 +16,11 @@ public enum ErrorCode {
     TOKEN_INVALID(401, "Token is invalid", HttpStatus.UNAUTHORIZED),
     JWT_TOKEN_INVALID(401, "JWT token is invalid", HttpStatus.UNAUTHORIZED),
     TOKEN_EXPIRED(401, "Token has expired", HttpStatus.UNAUTHORIZED),
-    TOKEN_HAS_BEEN_BLACKLISTED(401, "Token has been blacklisted", HttpStatus.UNAUTHORIZED);
+    TOKEN_HAS_BEEN_BLACKLISTED(401, "Token has been blacklisted", HttpStatus.UNAUTHORIZED),
+
+    USER_ALDREADY_SUCCESS(401,"user aldreaddy success", HttpStatus.BAD_REQUEST),
+
+    ;
 
     private final int code;
     private final String message;
