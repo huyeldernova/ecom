@@ -1,10 +1,9 @@
 package com.example.productservice.entity;
 
 import com.example.productservice.entity.enums.ProductStatus;
-import io.lettuce.core.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
+
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class Product extends BaseEntity{
     private String thumbnailUrl;
 
 //    @Type(JsonType.class)
-    @Column(name = "image_urls", columnDefinition = "jsonb")
+    @Column(name = "image_urls", columnDefinition = "json")
     @Builder.Default
     private List<String> imageUrls = new ArrayList<>();
 
