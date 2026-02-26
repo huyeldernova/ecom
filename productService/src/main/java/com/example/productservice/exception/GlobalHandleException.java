@@ -43,7 +43,7 @@ public class GlobalHandleException {
                 .timestamp(new Date())
                 .code(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(errors.size() > 1 ? String.valueOf(errors) : errors.getFirst())
+                .message(errors.size() > 1 ? String.valueOf(errors) : errors.get(0))
                 .path(request.getDescription(false).replace("uri=", ""))
                 .build();
 
