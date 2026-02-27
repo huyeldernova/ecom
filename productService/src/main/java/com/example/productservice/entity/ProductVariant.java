@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "product_variants")
@@ -28,7 +29,7 @@ public class ProductVariant extends BaseEntity{
     private String color;
 
     @Column(name = "image_url", length = 500)
-    private String imageUrl;
+    private List<String> imageUrls;
 
     @Column(name = "price_override", precision = 12, scale = 2)
     private BigDecimal finalPrice;
@@ -44,6 +45,5 @@ public class ProductVariant extends BaseEntity{
     public BigDecimal getEffectivePrice() {
         return (this.finalPrice != null) ? this.finalPrice : this.product.getPrice();
     }
-
 
 }
