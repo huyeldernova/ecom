@@ -272,6 +272,31 @@ public class ProductService {
                 .build();
     }
 
+    public VariantResponse getVariantById(UUID productId, UUID variantId) {
+        // 1. Tìm product → không thấy → throw PRODUCT_NOT_FOUND
+        productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        // 2. Tìm variant → không thấy → throw VARIANT_NOT_FOUND
+        ProductVariant variant = productVariantRepository.findById(variantId)
+                .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND));
+        // 3. Check variant.getProduct().getId() == productId
+        //    → không khớp → throw VARIANT_NOT_FOUND
+        if(!variant.getProduct().getId().equals(productId)){
+            throw new AppException(ErrorCode.VARIANT_NOT_FOUND);
+        }
+        // 4. Check isActive = false → throw INVALID_PRODUCT_VARIANT
+        if(!variant.getIsActive()){
+            throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
+        }
+        // 5. Check stockQuantity = 0 → throw INVALID_PRODUCT_VARIANT
+        if(variant.getStockQuantity() <= 0){
+            throw new AppException((ErrorCode.INVALID_PRODUCT_VARIANT));
+        }
+        // 6. Return toVariantResponse(variant)
+        return toVariantResponse(variant);
+    }
+
+
     private VariantResponse toVariantResponse(ProductVariant variant){
         return VariantResponse.builder()
                 .id(variant.getId())

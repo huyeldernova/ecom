@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 @Tag(name = "Product", description = "Product management API")
-@SecurityRequirement(name = "bearerAuth") // applies JWT auth badge to all endpoints in Swagger UI
+@SecurityRequirement(name = "bearerAuth")
 public class ProductController {
 
     private final ProductService productService;
@@ -219,4 +219,30 @@ public class ProductController {
                 .message("Variant deleted successfully")
                 .build();
     }
+
+    @GetMapping("/{productId}/variants/{variantId}")
+
+    @Operation(
+            summary = "Get variant by ID",
+            description = "Retrieves the details of a specific variant belonging to a product."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Variant retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = VariantResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Product or variant not found")
+    })
+    public com.example.productservice.dto.ApiResponses<VariantResponse> getVariantById(
+            @Parameter(description = "UUID of the parent product", required = true)
+            @PathVariable UUID productId,
+            @Parameter(description = "UUID of the variant to retrieve", required = true)
+            @PathVariable UUID variantId) {
+
+        return com.example.productservice.dto.ApiResponses.<VariantResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get variant successfully")
+                .data(productService.getVariantById(productId, variantId))
+                .build();
+    }
+
+
 }

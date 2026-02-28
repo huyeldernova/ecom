@@ -1,7 +1,9 @@
 package com.example.ecomerce.controller;
 
+import com.example.ecomerce.dto.IntroSpectResponse;
 import com.example.ecomerce.dto.reponse.ApiResponses;
 import com.example.ecomerce.dto.reponse.LoginResponse;
+import com.example.ecomerce.dto.request.IntroSpectRequest;
 import com.example.ecomerce.dto.request.LoginRequest;
 import com.example.ecomerce.exception.ErrorResponse;
 import com.example.ecomerce.service.AuthService;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication", description = "API xác thực người dùng")
 public class AuthController {
@@ -73,6 +75,17 @@ public class AuthController {
         return ApiResponses.<Void>builder()
                 .code(HttpStatus.OK.value())
                 .message("Logout Success")
+                .build();
+    }
+
+
+    @PostMapping("/introspect")
+    public ApiResponses<IntroSpectResponse> introspect(@RequestBody IntroSpectRequest request) {
+        IntroSpectResponse introspect = authService.introspect(request);
+        return ApiResponses.<IntroSpectResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Introspect successful")
+                .data(introspect)
                 .build();
     }
 }

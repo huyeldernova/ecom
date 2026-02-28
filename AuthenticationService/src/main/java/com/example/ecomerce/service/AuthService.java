@@ -1,9 +1,14 @@
 package com.example.ecomerce.service;
 
+import com.example.ecomerce.dto.IntroSpectResponse;
 import com.example.ecomerce.dto.reponse.LoginResponse;
+import com.example.ecomerce.dto.reponse.TokenVerificationResponse;
+import com.example.ecomerce.dto.request.IntroSpectRequest;
 import com.example.ecomerce.dto.request.LoginRequest;
 import com.example.ecomerce.entity.RedisToken;
 import com.example.ecomerce.entity.User;
+import com.example.ecomerce.exception.AppException;
+import com.example.ecomerce.exception.ErrorCode;
 import com.example.ecomerce.repository.RedisTokenRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.SignedJWT;
@@ -70,6 +75,34 @@ public class AuthService {
         log.info("Token saved: {}", accessToken);
 
     }
+
+    public IntroSpectResponse introspect(IntroSpectRequest request){
+        if(request.getToken().isBlank()){
+            throw new AppException(ErrorCode.TOKEN_INVALID);
+        }
+        try{
+            TokenVerificationResponse verificationResponse = jwtService.verifyToken(request.getToken());
+            if(!verificationResponse.isValid()){
+                return IntroSpectResponse.builder()
+                        .isValid(false)
+                        .authorities(List.of())
+                        .build();
+            }
+
+            return IntroSpectResponse.builder()
+                    .isValid(true)
+                    .authorities(verificationResponse.getAuthorities())
+                    .build();
+        }catch (Exception e){
+
+            return IntroSpectResponse.builder()
+                    .isValid(false)
+                    .authorities(List.of())
+                    .build();
+
+        }
+    }
+
 
 
 }

@@ -15,11 +15,8 @@ public enum ErrorCode {
     PRODUCT_NOT_FOUND(404, "Product not found", HttpStatus.NOT_FOUND),
     PRODUCT_ALREADY_EXISTS(400, "Product already exists", HttpStatus.BAD_REQUEST),
     SKU_ALREADY_EXISTS(400, "SKU already exists", HttpStatus.BAD_REQUEST),
-    VARIANT_NOT_FOUND(400, "variant not found", HttpStatus.NOT_FOUND)
-
-
-
-
+    VARIANT_NOT_FOUND(400, "variant not found", HttpStatus.NOT_FOUND),
+    INVALID_PRODUCT_VARIANT(400,"invalid product variant", HttpStatus.BAD_REQUEST)
 
     ;
 
