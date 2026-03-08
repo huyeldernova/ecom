@@ -14,4 +14,5 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
     Optional<Cart> findByUserId(UUID userId);
 
     Optional<Cart> findByUserIdAndStatus(UUID userId, CartStatus status);
+
 }

@@ -8,6 +8,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public class GlobalFilterAuthentication implements GlobalFilter, Ordered {
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/authentication/api/v1/auth/**"
+            "/authentication/api/v1/auth/.*"
     };
 
     private final AuthenticationClient authenticationClient;
@@ -45,7 +46,7 @@ public class GlobalFilterAuthentication implements GlobalFilter, Ordered {
                 if(introSpectResponse.getResult().isValid()){
                     return chain.filter(exchange);
                 }else{
-                    return Mono.error(new RuntimeException("Invalid token"));
+                    return unauthorizedResponse(exchange);
                 }
             });
     }
@@ -53,6 +54,11 @@ public class GlobalFilterAuthentication implements GlobalFilter, Ordered {
     @Override
     public int getOrder() {
         return -1;
+    }
+
+    private Mono<Void> unauthorizedResponse(ServerWebExchange exchange) {
+        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        return exchange.getResponse().setComplete();
     }
 
     private boolean isPublicEndpoint(ServerWebExchange exchange){
