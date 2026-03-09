@@ -10,6 +10,10 @@ import java.util.UUID;
 
 @Getter
 public class AddItemRequest {
+
+    @NotNull
+    private UUID productId;
+
     @NotNull(message = "Product variant is required")
     private UUID productVariantId;
 
