@@ -10,13 +10,14 @@
         <module name="ApiGatewayService" />
         <module name="productService" />
       </profile>
-      <profile name="Annotation profile for CartService" enabled="true">
+      <profile name="Annotation profile for OrderService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
+        <module name="OrderService" />
         <module name="CartService" />
         <module name="AuthenticationService" />
       </profile>
@@ -27,6 +28,7 @@
       <module name="ApiGatewayService" options="-parameters" />
       <module name="AuthenticationService" options="-parameters" />
       <module name="CartService" options="-parameters" />
+      <module name="OrderService" options="-parameters" />
       <module name="productService" options="-parameters" />
     </option>
   </component>

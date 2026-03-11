@@ -13,6 +13,8 @@ import com.example.productservice.repository.ProductVariantRepository;
 import com.example.productservice.specification.ProductSpecifications;
 import com.example.productservice.utils.Slug;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -104,6 +108,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "variants", key = "#variantId")
     public void deleteVariant(UUID productId, UUID variantId){
         productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -138,6 +143,7 @@ public class ProductService {
                 .build();
     }
 
+    @Cacheable(value = "products", key = "#id")
     public ProductDetailResponse getById(UUID id){
 
         Product product = productRepository.findById(id)
@@ -147,6 +153,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "products", key = "#id")
     public void delete (UUID id){
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -156,6 +163,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "products", key = "#id")
     public ProductDetailResponse update (ProductUpdateRequest request, UUID id){
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -206,6 +214,8 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "variants", key = "#variantId")
+
     public VariantResponse updateVariant(UUID productId, UUID variantId, VariantUpdateRequest request) {
         // 1. Tìm product
         productRepository.findById(productId)
@@ -272,6 +282,7 @@ public class ProductService {
                 .build();
     }
 
+    @Cacheable(value = "variants", key = "#variantId")
     public VariantResponse getVariantById(UUID productId, UUID variantId) {
         // 1. Tìm product → không thấy → throw PRODUCT_NOT_FOUND
         productRepository.findById(productId)
@@ -296,14 +307,27 @@ public class ProductService {
         return toVariantResponse(variant);
     }
 
+    public VariantResponse getVariantById(UUID variantId) {
+        ProductVariant variant = productVariantRepository.findById(variantId)
+                .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND));
+        return toVariantResponse(variant);
+    }
 
-    private VariantResponse toVariantResponse(ProductVariant variant){
+        private VariantResponse toVariantResponse(ProductVariant variant){
+
+            String variantName = Stream.of(variant.getSize(), variant.getColor())
+                    .filter(s -> s != null && !s.isBlank())
+                    .collect(Collectors.joining(" - "));
+
         return VariantResponse.builder()
                 .id(variant.getId())
                 .sku(variant.getSku())
                 .effectivePrice(variant.getEffectivePrice())
                 .size(variant.getSize())
                 .color(variant.getColor())
+                .productName(variant.getProduct().getName())
+                .variantName(variantName)
+                .isActive(variant.getIsActive())
                 .finalPrice(variant.getFinalPrice())
                 .stockQuantity(variant.getStockQuantity())
                 .imageUrls(variant.getImageUrls())
