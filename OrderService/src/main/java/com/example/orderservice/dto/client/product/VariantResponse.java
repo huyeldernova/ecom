@@ -1,4 +1,4 @@
-package com.example.productservice.dto;
+package com.example.orderservice.dto.client.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,13 +23,13 @@ public class VariantResponse {
 
     private String color;
 
-    private String productName;
-
-    private String variantName;
-
     private BigDecimal finalPrice;
 
     private BigDecimal effectivePrice;
+
+    private String productName;
+
+    private String variantName;
 
     private Integer stockQuantity;
 

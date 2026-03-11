@@ -244,5 +244,15 @@ public class ProductController {
                 .build();
     }
 
+    @GetMapping("/variants/{variantId}")
+    public com.example.productservice.dto.ApiResponses<VariantResponse> getVariantById( @PathVariable UUID variantId){
+        return com.example.productservice.dto.ApiResponses.<VariantResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get variant successfully")
+                .data(productService.getVariantById(variantId))
+                .build();
+    }
+
+
 
 }
