@@ -31,7 +31,7 @@ public class VariantResponse {
 
     private BigDecimal effectivePrice;
 
-    private Integer stockQuantity;
+//    private Integer stockQuantity;
 
     private List<String> imageUrls;
 

@@ -12,5 +12,4 @@ import java.math.BigDecimal;
 public class VariantResponse {
     private BigDecimal effectivePrice;
     private Boolean isActive;
-    private Integer stockQuantity;
 }

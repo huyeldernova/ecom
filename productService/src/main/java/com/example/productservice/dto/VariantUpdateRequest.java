@@ -28,8 +28,8 @@ public class VariantUpdateRequest {
     @Digits(integer = 15, fraction = 2, message = "Final price must have up to 15 integer digits and 2 decimal places")
     private BigDecimal finalPrice;
 
-    @Min(value = 0, message = "Stock quantity must be greater than or equal to 0")
-    private Integer stockQuantity;
+//    @Min(value = 0, message = "Stock quantity must be greater than or equal to 0")
+//    private Integer stockQuantity;
 
     private List<String> imageUrls;
 }

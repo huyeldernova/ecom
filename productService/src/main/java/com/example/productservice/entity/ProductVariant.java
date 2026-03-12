@@ -34,9 +34,9 @@ public class ProductVariant extends BaseEntity{
     @Column(name = "price_override", precision = 12, scale = 2)
     private BigDecimal finalPrice;
 
-    @Column(name = "stock_quantity", nullable = false)
-    @Builder.Default
-    private Integer stockQuantity = 0;
+//    @Column(name = "stock_quantity", nullable = false)
+//    @Builder.Default
+//    private Integer stockQuantity = 0;
 
     @Column(name = "is_active", nullable = false)
     @Builder.Default

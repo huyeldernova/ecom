@@ -53,9 +53,9 @@ public class CartService {
             throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
         }
 
-        if(variant.getStockQuantity() <= 0){
-            throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
-        }
+//        if(variant.getStockQuantity() <= 0){
+//            throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
+//        }
 
         Optional<CartItem> existingItem = cartItemRepository.findByCartAndProductVariantId(cart, request.getProductVariantId());
         if(existingItem.isPresent()){
@@ -147,9 +147,9 @@ public class CartService {
         if(Boolean.FALSE.equals(variant.getIsActive())){
             throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
         }
-        if(variant.getStockQuantity() <= 0){
-            throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
-        }
+//        if(variant.getStockQuantity() <= 0){
+//            throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
+//        }
 
         item.setProductVariantId(request.getProductVariantId());
         item.setSnapshotPrice(variant.getEffectivePrice());

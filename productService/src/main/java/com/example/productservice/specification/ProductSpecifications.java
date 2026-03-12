@@ -1,7 +1,6 @@
 package com.example.productservice.specification;
 
 import com.example.productservice.entity.Product;
-import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
