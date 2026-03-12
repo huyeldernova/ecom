@@ -70,7 +70,6 @@ public class ProductService {
                         .size(variantRequest.getSize())
                         .color(variantRequest.getColor())
                         .finalPrice(variantRequest.getFinalPrice())
-                        .stockQuantity(variantRequest.getStockQuantity())
                         .imageUrls(variantRequest.getImageUrls())
                         .build();
 
@@ -96,7 +95,6 @@ public class ProductService {
                 .size(request.getSize())
                 .color(request.getColor())
                 .finalPrice(request.getFinalPrice())
-                .stockQuantity(request.getStockQuantity())
                 .imageUrls(request.getImageUrls() != null ? request.getImageUrls() : new ArrayList<>())
                 .build();
 
@@ -244,9 +242,6 @@ public class ProductService {
         if(request.getFinalPrice() != null){
             variant.setFinalPrice(request.getFinalPrice());
         }
-        if(request.getStockQuantity() != null){
-            variant.setStockQuantity(request.getStockQuantity());
-        }
         if(request.getImageUrls() != null){
             variant.setImageUrls(request.getImageUrls());
         }
@@ -299,10 +294,6 @@ public class ProductService {
         if(!variant.getIsActive()){
             throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
         }
-        // 5. Check stockQuantity = 0 → throw INVALID_PRODUCT_VARIANT
-        if(variant.getStockQuantity() <= 0){
-            throw new AppException((ErrorCode.INVALID_PRODUCT_VARIANT));
-        }
         // 6. Return toVariantResponse(variant)
         return toVariantResponse(variant);
     }
@@ -329,7 +320,6 @@ public class ProductService {
                 .variantName(variantName)
                 .isActive(variant.getIsActive())
                 .finalPrice(variant.getFinalPrice())
-                .stockQuantity(variant.getStockQuantity())
                 .imageUrls(variant.getImageUrls())
                 .build();
     }
