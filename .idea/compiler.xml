@@ -10,17 +10,6 @@
         <module name="ApiGatewayService" />
         <module name="productService" />
       </profile>
-      <profile name="Annotation profile for InventoryService" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-        </processorPath>
-        <module name="CartService" />
-        <module name="AuthenticationService" />
-        <module name="InventoryService" />
-      </profile>
       <profile name="Annotation profile for OrderService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -31,6 +20,18 @@
         </processorPath>
         <module name="OrderService" />
       </profile>
+      <profile name="Annotation profile for PaymentService" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="CartService" />
+        <module name="AuthenticationService" />
+        <module name="PaymentService" />
+        <module name="InventoryService" />
+      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
@@ -40,6 +41,7 @@
       <module name="CartService" options="-parameters" />
       <module name="InventoryService" options="-parameters" />
       <module name="OrderService" options="-parameters" />
+      <module name="PaymentService" options="-parameters" />
       <module name="productService" options="-parameters" />
     </option>
   </component>
