@@ -40,6 +40,7 @@ public class InventoryService {
         Integer newQuantity = inventory.getQuantity() - request.getQuantity();
         inventory.setQuantity(newQuantity);
 
+
         inventoryRepository.save(inventory);
 
 
@@ -54,6 +55,40 @@ public class InventoryService {
 
 
         return toInventoryResponse(inventory);
+    }
+
+    @Transactional
+    public InventoryResponse reserveStock(ReserveStockRequest request) {
+        // 1. Tìm inventory theo productVariantId
+        Inventory inventory = inventoryRepository.findByProductVariantId(request.getProductVariantId())
+                .orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_FOUND));
+
+        // 2. Check: availableQuantity >= request.getQuantity() không?
+        //    → nếu không đủ → throw OUT_OF_STOCK
+        if(inventory.getAvailableQuantity() < request.getQuantity()){
+            throw new AppException(ErrorCode.OUT_OF_STOCK);
+        }
+        // 3. Tăng reservedQuantity lên
+        Integer newReservedQuantity = inventory.getReservedQuantity() + request.getQuantity();
+        inventory.setReservedQuantity(newReservedQuantity);
+
+        // 4. Save
+
+        inventoryRepository.save(inventory);
+        // 5. Lưu InventoryTransaction type = RESERVE
+
+        InventoryTransaction transaction = InventoryTransaction.builder()
+                .inventory(inventory)
+                .type(TransactionType.RESERVE)
+                .quantity(request.getQuantity())
+                .reason(request.getOrderId().toString())
+                .build();
+
+        inventoryTransactionRepository.save(transaction);
+
+        // 6. Return
+        return toInventoryResponse(inventory);
+
     }
 
     @Transactional
@@ -89,8 +124,8 @@ public class InventoryService {
         Inventory inventory = inventoryRepository.findByProductVariantId(request.getProductVariantId())
                 .orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_FOUND));
 
-        Integer newQuantity = inventory.getQuantity() + request.getQuantity();
-        inventory.setQuantity(newQuantity);
+        Integer newReservedQuantity = inventory.getReservedQuantity() - request.getQuantity();
+        inventory.setReservedQuantity(newReservedQuantity);
 
         inventoryRepository.save(inventory);
 
@@ -107,6 +142,8 @@ public class InventoryService {
         return toInventoryResponse(inventory);
 
     }
+
+
 
     @Transactional
     public InventoryResponse importStock(ImportStockRequest request){

@@ -98,4 +98,14 @@ public class InventoryController {
                 .data(inventoryService.releaseStock(request))
                 .build();
     }
+
+    @PostMapping("/reserve")
+    @PreAuthorize("hasAuthority('ORDER_SERVICE')")
+    public ApiResponses<InventoryResponse> reserveStock(@RequestBody ReserveStockRequest request) {
+        return ApiResponses.<InventoryResponse>builder()
+                .code(1000)
+                .message("stock reserve")
+                .data(inventoryCommandService.reserveStock(request))
+                .build();
+    }
 }

@@ -1,7 +1,7 @@
-package com.example.orderservice.config;
+package com.example.paymentservice.config;
 
-import com.example.orderservice.exception.ErrorCode;
-import com.example.orderservice.exception.ErrorResponse;
+import com.example.paymentservice.exception.ErrorCode;
+import com.example.paymentservice.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

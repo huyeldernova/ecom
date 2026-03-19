@@ -1,26 +1,29 @@
-package com.example.orderservice.config;
+package com.example.paymentservice.config;
 
-import com.example.orderservice.exception.ErrorCode;
-import com.example.orderservice.exception.ErrorResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+
+
+import com.example.paymentservice.exception.ErrorCode;
+import com.example.paymentservice.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 
 import java.io.IOException;
 import java.util.Date;
 
-public class JwtAccessDeniedHandler implements AccessDeniedHandler {
-
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, @NonNull AccessDeniedException accessDeniedException)
+    public void commence(HttpServletRequest request, HttpServletResponse response, @NonNull AuthenticationException authException)
             throws IOException {
+        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
-        ErrorCode errorCode = ErrorCode.ACCESS_DENIED;
         response.setStatus(errorCode.getCode());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 

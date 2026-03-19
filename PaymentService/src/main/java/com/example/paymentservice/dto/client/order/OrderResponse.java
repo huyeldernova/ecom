@@ -1,6 +1,5 @@
-package com.example.orderservice.dto;
+package com.example.paymentservice.dto.client.order;
 
-import com.example.orderservice.entity.OrderStatus;
 import lombok.*;
 
 import java.math.BigDecimal;

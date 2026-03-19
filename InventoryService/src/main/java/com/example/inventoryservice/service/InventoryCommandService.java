@@ -2,6 +2,7 @@ package com.example.inventoryservice.service;
 
 import com.example.inventoryservice.dto.DeductStockRequest;
 import com.example.inventoryservice.dto.InventoryResponse;
+import com.example.inventoryservice.dto.ReserveStockRequest;
 import com.example.inventoryservice.exception.AppException;
 import com.example.inventoryservice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,16 @@ public class InventoryCommandService {
             }
         }
         throw new AppException(ErrorCode.CONFLICT); // unreachable nhưng compiler cần
+    }
+
+    public InventoryResponse reserveStock(ReserveStockRequest request) {
+        for (int attempt = 1; attempt <= 3; attempt++) {
+            try {
+                return inventoryService.reserveStock(request);
+            } catch (OptimisticLockingFailureException e) {
+                if (attempt == 3) throw new AppException(ErrorCode.CONFLICT);
+            }
+        }
+        throw new AppException(ErrorCode.CONFLICT);
     }
 }

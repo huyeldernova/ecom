@@ -1,10 +1,16 @@
 package com.example.orderservice.service;
 
 import com.example.orderservice.client.CartClient;
+import com.example.orderservice.client.InventoryClient;
+import com.example.orderservice.client.PaymentClient;
 import com.example.orderservice.client.ProductClient;
 import com.example.orderservice.dto.*;
 import com.example.orderservice.dto.client.cart.CartItemResponse;
 import com.example.orderservice.dto.client.cart.CartResponse;
+import com.example.orderservice.dto.client.inventory.ReleaseStockRequest;
+import com.example.orderservice.dto.client.inventory.ReserveStockRequest;
+import com.example.orderservice.dto.client.payment.PaymentRequest;
+import com.example.orderservice.dto.client.payment.PaymentResponse;
 import com.example.orderservice.dto.client.product.VariantResponse;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.entity.OrderItem;
@@ -25,10 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +44,8 @@ public class OrderService {
     private final CartClient cartClient;
     private final ProductClient productClient;
     private final ObjectMapper objectMapper;
+    private final PaymentClient paymentClient;
+    private final InventoryClient inventoryClient;
 
 
     @Transactional
@@ -73,12 +78,10 @@ public class OrderService {
             if (Boolean.FALSE.equals(variant.getIsActive())) {
                 throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
             }
-            if (variant.getStockQuantity() <= 0) {
-                throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
-            }
 
             BigDecimal subtotal = item.getSnapshotPrice()
                     .multiply(BigDecimal.valueOf(item.getQuantity()));
+
 
             OrderItem orderItem = OrderItem.builder()
                     .productVariantId(item.getProductVariantId())
@@ -118,14 +121,79 @@ public class OrderService {
         orderItems.forEach(item -> item.setOrder(order));
         orderItemRepository.saveAll(orderItems);
 
+        Map<UUID, Integer> reservedItems = new LinkedHashMap<>();
+        for (CartItemResponse item : cart.getCartItems()) {
+            try {
+
+                inventoryClient.reserveStock(token, ReserveStockRequest.builder()
+                        .productVariantId(item.getProductVariantId())
+                        .quantity(item.getQuantity())
+                        .orderId(order.getId())
+                        .build());
+                reservedItems.put(item.getProductVariantId(), item.getQuantity());
+
+            } catch (Exception e) {
+
+                log.error("Failed to reserve stock: {}", item.getProductVariantId(), e);
+                reservedItems.forEach((variantId, quantity) -> {
+
+                    try {
+
+                        inventoryClient.releaseStock(token, ReleaseStockRequest.builder()
+                                .productVariantId(variantId)
+                                .quantity(quantity)
+                                .orderId(order.getId())
+                                .build());
+                    } catch (Exception releaseEx) {
+                        log.error("Failed to release stock: {}", variantId, releaseEx);
+
+                    }
+                });
+
+                throw new AppException(ErrorCode.OUT_OF_STOCK);
+            }
+        }
+
+        PaymentRequest paymentRequest = PaymentRequest.builder()
+                .orderId(order.getId())
+                .amount(totalAmount.multiply(BigDecimal.valueOf(100)).longValue())
+                .currency("vnd")
+                .build();
+
+        String clientSecret;
+        try {
+            ApiResponses<PaymentResponse> paymentResponse = paymentClient.createPaymentIntent(token, paymentRequest);
+            clientSecret = paymentResponse.getData().getClientSecret();
+
+        } catch (Exception e) {
+            log.error("Payment service failed for orderId: {}", order.getId(), e);
+
+            reservedItems.forEach((variantId, quantity) -> {
+                try {
+                    inventoryClient.releaseStock(token, ReleaseStockRequest.builder()
+                            .productVariantId(variantId)
+                            .quantity(quantity)
+                            .orderId(order.getId())
+                            .build());
+                } catch (Exception releaseEx) {
+                    log.error("Failed to release stock: {}", variantId, releaseEx);
+                }
+            });
+
+            throw new AppException(ErrorCode.PAYMENT_SERVICE_UNAVAILABLE);
+
+        }
+
+        OrderResponse response = toOrderResponse(order);
+        response.setClientSecret(clientSecret);
+
         try {
             cartClient.clearCart(token);
         } catch (Exception e) {
             log.warn("Clear cart failed for userId: {}", userId, e);
         }
 
-
-        return toOrderResponse(order);
+        return response;
     }
 
     public OrderResponse getOrder(UUID orderId, UUID userId) {
@@ -169,20 +237,20 @@ public class OrderService {
 
 
     @Transactional
-    public OrderResponse updateOrderStatus(UUID orderId, OrderStatus newStatus) {
+    public void updateOrderStatus(UUID orderId, UpdateOrderStatusRequest request) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         OrderStatus currentStatus = order.getStatus();
 
-        List<OrderStatus> allowed = VALID_TRANSITIONS.get(currentStatus);
-        if (!allowed.contains(newStatus)) {
+        List<OrderStatus> allowed = VALID_TRANSITIONS.getOrDefault(currentStatus, List.of());
+
+        if (!allowed.contains(request.getStatus())) {
             throw new AppException(ErrorCode.INVALID_ORDER_STATUS_TRANSITION);
         }
 
-        order.setStatus(newStatus);
+        order.setStatus(request.getStatus());
         orderRepository.save(order);
-        return toOrderResponse(order);
     }
 
     public PageResponse<OrderResponse> getAllOrders(OrderStatus status, int page, int size) {
@@ -218,6 +286,11 @@ public class OrderService {
             OrderStatus.CANCELLED, List.of()
     );
 
+    public OrderResponse getOrderById(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        return toOrderResponse(order);
+    }
 
     private OrderResponse toOrderResponse(Order order)  {
 

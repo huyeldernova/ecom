@@ -58,6 +58,8 @@ public enum ErrorCode {
 
     UNAUTHORIZED(401, "unauthorized", HttpStatus.UNAUTHORIZED),
 
+    OUT_OF_STOCK(401, "out of stock",HttpStatus.BAD_REQUEST)
+
     ;
 
     private final int code;
