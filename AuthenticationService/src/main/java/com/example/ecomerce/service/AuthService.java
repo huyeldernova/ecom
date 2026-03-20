@@ -44,8 +44,8 @@ public class AuthService {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        String accessToken = jwtService.generateAccessToken(user.getId(), authorities);
-        String refreshToken = jwtService.generateRefreshToken(user.getId());
+        String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getEmail(), authorities);
+        String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
 
 
         return LoginResponse.builder()

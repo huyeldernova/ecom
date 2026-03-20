@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 
 @Getter
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginResponse implements Serializable {
-    private String userId;
+    private UUID userId;
     private String accessToken;
     private String refreshToken;
     private List<String> authorities;

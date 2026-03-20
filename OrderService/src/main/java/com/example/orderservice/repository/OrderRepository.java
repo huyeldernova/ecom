@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,5 +21,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
     Optional<Order>findByIdAndUserId(UUID id, UUID userId);
 
     Page<Order>findByStatus(OrderStatus status, Pageable page);
+    List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime dateTime);
 
 }

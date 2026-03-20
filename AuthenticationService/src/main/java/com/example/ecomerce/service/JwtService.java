@@ -37,7 +37,7 @@ public class JwtService {
         return Base64.getDecoder().decode(secretKey);
     }
 
-    public String generateAccessToken(String userId, List<String> authorities) throws JOSEException {
+    public String generateAccessToken(String userId, String email, List<String> authorities) throws JOSEException {
         // header
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
@@ -47,6 +47,7 @@ public class JwtService {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(userId)
+                .claim("email", email)
                 .issueTime(now)
                 .expirationTime(expirationTime)
                 .claim(AUTHORITIES, authorities)

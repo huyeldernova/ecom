@@ -33,11 +33,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 
 public class OrderService {
+
+    private static final String INTERNAL_API_KEY = "super-secret-internal-key-123";
+
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
@@ -233,6 +237,39 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+    }
+
+    @Transactional
+    public void cancelExpiredOrder(UUID orderId) {
+
+        // Bước 1: Tìm order
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        // Bước 2: Update status
+        if (order.getStatus() != OrderStatus.PENDING) {
+            log.warn("Order {} is no longer PENDING, skipping", orderId);
+            return;
+        }
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+
+        // Bước 3: Release stock — loop từng item
+        for (OrderItem item : order.getOrderItems()) {
+            try {
+                inventoryClient.releaseStock(
+                        INTERNAL_API_KEY,
+                        ReleaseStockRequest.builder()
+                                .productVariantId(item.getProductVariantId())
+                                .quantity(item.getQuantity())
+                                .orderId(orderId)
+                                .build()
+                );
+            } catch (Exception e) {
+                log.error("Failed to release stock for variant: {}",
+                        item.getProductVariantId(), e);
+            }
+        }
     }
 
 
