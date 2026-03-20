@@ -19,10 +19,9 @@ import com.example.orderservice.exception.AppException;
 import com.example.orderservice.exception.ErrorCode;
 import com.example.orderservice.repository.OrderItemRepository;
 import com.example.orderservice.repository.OrderRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -109,7 +108,7 @@ public class OrderService {
         try{
              shippingAddressJson = objectMapper.writeValueAsString(
                     request.getShippingAddress());
-        }catch(JsonProcessingException e){
+        }catch(JacksonException  e){
             throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 
@@ -336,7 +335,7 @@ public class OrderService {
         try {
             addressDto = objectMapper.readValue( order.getShippingAddress(),
                     ShippingAddressDto.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException  e) {
             throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 

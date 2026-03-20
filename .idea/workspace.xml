@@ -4,7 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="79a84d99-6d4f-45d9-9ee8-09923aaa018a" name="Changes" comment="" />
+    <list default="true" id="79a84d99-6d4f-45d9-9ee8-09923aaa018a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/db-forest-config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.idea/db-forest-config.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/AuthenticationService/src/main/java/com/example/ecomerce/EcomerceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/AuthenticationService/src/main/java/com/example/ecomerce/EcomerceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/AuthenticationService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/AuthenticationService/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/CartService/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/CartService/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/CartService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/CartService/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/InventoryService/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/OrderService/src/main/java/com/example/orderservice/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/OrderService/src/main/java/com/example/orderservice/service/OrderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/OrderService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/OrderService/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/PaymentService/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/PaymentService/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/PaymentService/src/main/java/com/example/paymentservice/controller/PaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/PaymentService/src/main/java/com/example/paymentservice/controller/PaymentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/PaymentService/src/main/java/com/example/paymentservice/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/PaymentService/src/main/java/com/example/paymentservice/service/PaymentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/productService/src/main/java/com/example/productservice/ProductServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/productService/src/main/java/com/example/productservice/ProductServiceApplication.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -96,7 +113,7 @@
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/ecomerce/ProfileService/src/main/java/com/example/profileservice/config",
+    "last_opened_file_path": "D:/ecomerce",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",

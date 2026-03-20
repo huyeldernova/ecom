@@ -35,17 +35,12 @@ import java.util.UUID;
 @Slf4j
 public class PaymentService {
 
-    private final PaymentRepository paymentRepository;
-
     @Value("${stripe.webhook.secret}")
     private String webhookSecret;
 
-    private final OrderClient orderClient;
+    private final PaymentEventHandler paymentEventHandler;
 
-    private final InventoryClient inventoryClient;
-
-    private static final String INTERNAL_API_KEY = "super-secret-internal-key-123";
-
+    private final PaymentRepository paymentRepository;
 
     public PaymentResponse createPaymentIntent(PaymentRequest request, UUID userId)  {
 
@@ -60,7 +55,6 @@ public class PaymentService {
                                     .build()
                     )
                     .build();
-
 
             PaymentIntent intent = PaymentIntent.create(params);
 
@@ -86,7 +80,6 @@ public class PaymentService {
         }
     }
 
-
     @Transactional
     public void handleWebhook(String payload, String sigHeader)
     {
@@ -96,8 +89,8 @@ public class PaymentService {
 
             // Xử lý event
             switch (event.getType()) {
-                case "payment_intent.succeeded" -> handlePaymentSucceeded(event);
-                case "payment_intent.payment_failed" -> handlePaymentFailed(event);
+                case "payment_intent.succeeded" -> paymentEventHandler.handlePaymentSucceeded(event);
+                case "payment_intent.payment_failed" -> paymentEventHandler.handlePaymentFailed(event);
                 default -> log.info("Unhandled event: {}", event.getType());
             }
         }catch(SignatureVerificationException e){
@@ -106,108 +99,5 @@ public class PaymentService {
             throw new AppException(ErrorCode.INVALID_WEBHOOK_SIGNATURE);
         }
     }
-
-    private void handlePaymentSucceeded(Event event) {
-
-
-        PaymentIntent intent = (PaymentIntent) event
-                .getDataObjectDeserializer()
-                .getObject()
-                .orElseThrow();
-
-        Payment payment = paymentRepository.findByPaymentIntentId(intent.getId())
-                .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
-
-        if (payment.getStatus() == PaymentStatus.COMPLETED) {
-            log.info("Payment already processed, skipping: {}", intent.getId());
-            return;
-        }
-
-        payment.setStatus(PaymentStatus.COMPLETED);
-        payment.setPaidAt(LocalDateTime.now());
-
-        paymentRepository.save(payment);
-
-        try{
-            orderClient.updateOrderStatus(
-                    payment.getOrderId(),
-                    INTERNAL_API_KEY,
-                    new UpdateOrderStatusRequest(OrderStatus.CONFIRMED));
-        }catch (Exception e){
-            log.error("Failed to update order status for orderId: {}", payment.getOrderId(), e);
-            throw new AppException(ErrorCode.ORDER_SERVICE_UNAVAILABLE);
-
-        }
-
-        try {
-            OrderResponse order = orderClient.getOrder(
-                    payment.getOrderId(),
-                    INTERNAL_API_KEY
-            ).getData();
-
-            for (OrderItemResponse item : order.getOrderItems()) {
-                inventoryClient.deductStock(
-                        INTERNAL_API_KEY,
-                        DeductStockRequest.builder()
-                                .productVariantId(item.getProductVariantId())
-                                .quantity(item.getQuantity())
-                                .orderId(payment.getOrderId())
-                                .build()
-                );
-            }
-        } catch (Exception e) {
-            log.error("Failed to deduct stock for orderId: {}", payment.getOrderId(), e);
-            throw new AppException(ErrorCode.INVENTORY_SERVICE_UNAVAILABLE);
-        }
-    }
-
-    private void handlePaymentFailed(Event event) {
-        PaymentIntent intent = (PaymentIntent) event
-                .getDataObjectDeserializer()
-                .getObject()
-                .orElseThrow();
-
-        Payment payment = paymentRepository.findByPaymentIntentId(intent.getId())
-                .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
-
-        if (payment.getStatus() == PaymentStatus.FAILED || payment.getStatus() == PaymentStatus.COMPLETED) {
-            log.info("Payment already finalized, skipping: {}", intent.getId());
-            return;
-        }
-
-        payment.setStatus(PaymentStatus.FAILED);
-
-        paymentRepository.save(payment);
-
-        try{
-            orderClient.updateOrderStatus(
-                    payment.getOrderId(),
-                    INTERNAL_API_KEY,
-                    new UpdateOrderStatusRequest(OrderStatus.CANCELLED));
-        }catch (Exception e){
-            log.error("Failed to update order status for orderId: {}", payment.getOrderId(), e);
-        }
-
-        try {
-            OrderResponse order = orderClient.getOrder(
-                    payment.getOrderId(),
-                    INTERNAL_API_KEY
-            ).getData();
-
-            for (OrderItemResponse item : order.getOrderItems()) {
-                inventoryClient.releaseStock(
-                        INTERNAL_API_KEY,
-                        ReleaseStockRequest.builder()
-                                .productVariantId(item.getProductVariantId())
-                                .quantity(item.getQuantity())
-                                .orderId(payment.getOrderId())
-                                .build()
-                );
-            }
-        } catch (Exception e) {
-            log.error("Failed to release stock for orderId: {}", payment.getOrderId(), e);
-        }
-    }
-
 
 }

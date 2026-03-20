@@ -1,0 +1,31 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /inventory
+
+spring:
+  application:
+    name: inventory-service
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ecommerce_inventory
+    username: root
+    password: 123456
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+jwt:
+  secret-key: "298d452efb93a5b2eb1005d0bec28a1cc90d4b51ab055e32499119fbe606a61e9f9a8f0f"
+
+internal:
+  api-key: super
