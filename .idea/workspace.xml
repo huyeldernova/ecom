@@ -4,338 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="79a84d99-6d4f-45d9-9ee8-09923aaa018a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/db-forest-config.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ecomerce.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/main/java/com/example/apigatewayservice/ApiGatewayServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/main/java/com/example/apigatewayservice/client/AuthenticationClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/main/java/com/example/apigatewayservice/config/GatewayRouterConfiguration.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/main/java/com/example/apigatewayservice/config/GlobalFilterAuthentication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/main/java/com/example/apigatewayservice/config/WebClientConfiguration.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/main/java/com/example/apigatewayservice/dto/ApiResponses.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/main/java/com/example/apigatewayservice/dto/IntroSpectRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/main/java/com/example/apigatewayservice/dto/IntroSpectResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/main/resources/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGatewayService/src/test/java/com/example/apigatewayservice/ApiGatewayServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/EcomerceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/config/JwtAccessDeniedHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/config/JwtAuthenticationEntryPoint.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/config/JwtDecoderConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/config/RedisConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/config/SwaggerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/constant/AuthConstant.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/controller/AuthController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/controller/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/dto/IntroSpectResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/dto/JwtInfo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/dto/reponse/ApiResponses.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/dto/reponse/LoginResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/dto/reponse/RegisterResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/dto/reponse/TokenVerificationResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/dto/request/IntroSpectRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/dto/request/LoginRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/dto/request/RegisterRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/entity/RedisToken.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/entity/Role.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/entity/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/entity/UserHasRole.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/enums/TokenType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/exception/AppException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/exception/ErrorCode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/exception/ErrorResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/exception/GlobalHandleException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/repository/RedisTokenRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/repository/RoleRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/repository/UserRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/service/AuthService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/service/JwtService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/service/UserDetailServiceCustom.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/ecomerce/service/UserService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/java/com/example/event/UserRegisteredEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/main/resources/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthenticationService/src/test/java/com/example/ecomerce/EcomerceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/CartServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/client/ProductClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/config/CacheConfiguration.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/config/JwtAccessDeniedHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/config/JwtAuthenticationEntryPoint.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/config/JwtDecoderConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/config/ProductClientConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/config/RedisConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/config/SwaggerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/controller/CartController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/dto/AddItemRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/dto/ApiResponses.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/dto/CartItemResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/dto/CartResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/dto/UpdateQuantityRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/dto/UpdateVariantRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/dto/client/VariantResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/entity/BaseEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/entity/Cart.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/entity/CartItem.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/entity/enums/CartStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/exception/AppException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/exception/ErrorCode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/exception/ErrorResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/exception/GlobalHandleException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/repository/CartItemRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/repository/CartRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/java/com/example/cartservice/service/CartService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/main/resources/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartService/src/test/java/com/example/cartservice/CartServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/InventoryServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/config/JwtAccessDeniedHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/config/JwtAuthenticationEntryPoint.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/config/JwtDecoderConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/config/SwaggerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/controller/InternalInventoryController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/controller/InventoryController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/ApiResponses.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/CreateInventoryRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/DeductStockRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/ImportStockRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/InventoryResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/InventoryTransactionResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/PageResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/ReleaseStockRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/ReserveStockRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/dto/TransactionFilterRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/entity/BaseEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/entity/Inventory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/entity/InventoryTransaction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/entity/TransactionType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/exception/AppException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/exception/ErrorCode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/exception/ErrorResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/exception/GlobalHandleException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/filter/TransactionSpecification.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/repository/InventoryRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/repository/InventoryTransactionRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/service/InventoryCommandService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/java/com/example/inventoryservice/service/InventoryService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryService/src/test/java/com/example/inventoryservice/InventoryServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/OrderServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/client/CartClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/client/InventoryClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/client/PaymentClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/client/ProductClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/config/CartClientConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/config/InventoryClientConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/config/JwtAccessDeniedHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/config/JwtAuthenticationEntryPoint.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/config/JwtDecoderConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/config/PaymentClientConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/config/ProductClientConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/config/SwaggerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/controller/AdminController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/controller/OrderController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/ApiResponses.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/CreateOrderRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/OrderItemResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/OrderResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/PageResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/ShippingAddressDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/UpdateOrderStatusRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/client/cart/CartItemResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/client/cart/CartResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/client/cart/CartStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/client/inventory/InventoryResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/client/inventory/ReleaseStockRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/client/inventory/ReserveStockRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/client/payment/PaymentRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/client/payment/PaymentResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/dto/client/product/VariantResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/entity/BaseEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/entity/Order.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/entity/OrderItem.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/entity/OrderStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/exception/AppException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/exception/ErrorCode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/exception/ErrorResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/exception/GlobalHandleException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/repository/OrderItemRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/repository/OrderRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/service/OrderSchedulerService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/java/com/example/orderservice/service/OrderService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/main/resources/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderService/src/test/java/com/example/orderservice/OrderServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/PaymentServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/client/InventoryClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/client/OrderClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/config/InventoryClientConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/config/JwtAccessDeniedHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/config/JwtAuthenticationEntryPoint.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/config/JwtDecoderConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/config/OrderClientConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/config/StripeConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/config/SwaggerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/controller/PaymentController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/ApiResponses.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/PaymentRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/PaymentResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/client/inventory/DeductStockRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/client/inventory/ReleaseStockRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/client/order/OrderItemResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/client/order/OrderResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/client/order/OrderStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/client/order/ShippingAddressDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/dto/client/order/UpdateOrderStatusRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/entity/BaseEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/entity/Payment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/entity/PaymentStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/exception/AppException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/exception/ErrorCode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/exception/ErrorResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/exception/GlobalHandleException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/repository/PaymentRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/java/com/example/paymentservice/service/PaymentService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/main/resources/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaymentService/src/test/java/com/example/paymentservice/PaymentServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/event/UserRegisteredEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/ProfileServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/config/JwtAccessDeniedHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/config/JwtAuthenticationEntryPoint.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/config/JwtDecoderConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/controller/AddressController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/controller/ProfileController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/controller/WishlistController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/dto/AddressRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/dto/AddressResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/dto/ApiResponses.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/dto/ProfileResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/dto/UpdateProfileRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/dto/WishlistResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/entity/Address.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/entity/Gender.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/entity/Label.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/entity/UserProfile.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/entity/Wishlist.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/exception/AppException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/exception/ErrorCode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/exception/ErrorResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/exception/GlobalHandleException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/repository/AddressRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/repository/UserProfileRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/repository/WishlistRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/service/AddressService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/service/KafkaConsumerService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/service/ProfileService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/java/com/example/profileservice/service/WishlistService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/main/resources/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProfileService/src/test/java/com/example/profileservice/ProfileServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/ProductServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/config/CacheConfiguration.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/config/JwtAccessDeniedHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/config/JwtAuthenticationEntryPoint.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/config/JwtDecoderConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/config/RedisConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/config/S3Config.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/config/SwaggerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/controller/CategoryController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/controller/FileController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/controller/ProductController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/ApiResponses.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/CategoryRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/CategoryResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/CategoryUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/FileMetaDataResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/PageResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/ProductDetailResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/ProductFilterRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/ProductRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/ProductSummaryResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/ProductUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/S3Properties.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/VariantRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/VariantResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/dto/VariantUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/entity/BaseEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/entity/Category.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/entity/Product.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/entity/ProductVariant.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/entity/enums/ProductStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/exception/AppException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/exception/ErrorCode.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/exception/ErrorResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/exception/GlobalHandleException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/repository/CategoryRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/repository/ProductRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/repository/ProductVariantRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/service/CategoryService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/service/FileService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/service/ProductService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/specification/ProductSpecifications.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/utils/Slug.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/resources/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/test/java/com/example/productservice/ProductServiceApplicationTests.java" beforeDir="false" />
-    </list>
+    <list default="true" id="79a84d99-6d4f-45d9-9ee8-09923aaa018a" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -405,49 +74,49 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.ApiGatewayServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.EcomerceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.PaymentServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.ProductServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;ProfileService&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/ecomerce/ProfileService/src/main/java/com/example/profileservice/config&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.ApiGatewayServiceApplication.executor": "Run",
+    "Spring Boot.EcomerceApplication.executor": "Run",
+    "Spring Boot.PaymentServiceApplication.executor": "Run",
+    "Spring Boot.ProductServiceApplication.executor": "Run",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "frontend",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/ecomerce/ProfileService/src/main/java/com/example/profileservice/config",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql&quot;,
-      &quot;mysql_aurora&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql",
+      "mysql_aurora"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\ecomerce\ProfileService\src\main\java\com\example\profileservice\config" />
