@@ -58,7 +58,11 @@ public enum ErrorCode {
 
     UNAUTHORIZED(401, "unauthorized", HttpStatus.UNAUTHORIZED),
 
-    OUT_OF_STOCK(401, "out of stock",HttpStatus.BAD_REQUEST)
+    OUT_OF_STOCK(401, "out of stock",HttpStatus.BAD_REQUEST),
+
+    HAS_ACTIVE_ORDER(400, "You have an active order in progress. Please wait until it is delivered.", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_CHECKOUT(409,  "Order cannot be checked out because it is not in PENDING status", HttpStatus.CONFLICT)
+
 
     ;
 

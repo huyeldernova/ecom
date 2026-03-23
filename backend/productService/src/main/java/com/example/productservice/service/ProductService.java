@@ -91,6 +91,7 @@ public class ProductService {
         }
 
         ProductVariant variant = ProductVariant.builder()
+                .product(product)
                 .sku(request.getSku())
                 .size(request.getSize())
                 .color(request.getColor())
@@ -100,9 +101,9 @@ public class ProductService {
 
         product.addVariant(variant);
 
-        productRepository.save(product);
+        ProductVariant saved = productVariantRepository.save(variant);
 
-        return toVariantResponse(variant);
+        return toVariantResponse(saved);
     }
 
     @Transactional

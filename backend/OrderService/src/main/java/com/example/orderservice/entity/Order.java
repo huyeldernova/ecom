@@ -2,6 +2,7 @@ package com.example.orderservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Order extends BaseEntity{
 
     @Column(name = "user_id", nullable = false)

@@ -28,7 +28,7 @@ public class ProductVariant extends BaseEntity{
     @Column(name = "color", nullable = false, length = 50)
     private String color;
 
-    @Column(name = "image_url", length = 500)
+    @Column(name = "image_urls", columnDefinition = "json")
     private List<String> imageUrls;
 
     @Column(name = "price_override", precision = 12, scale = 2)

@@ -48,5 +48,12 @@
       <jdbc-url>jdbc:mysql://localhost:3306/ecommerce_payment</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="ecomerce_profile@localhost" uuid="27e0f17f-fd5d-41d4-b192-31f761b6ea07">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/ecomerce_profile</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

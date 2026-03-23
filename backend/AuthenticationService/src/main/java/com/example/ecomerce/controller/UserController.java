@@ -12,10 +12,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -47,6 +46,18 @@ public class UserController {
                 .code(HttpStatus.CREATED.value())
                 .message("register success")
                 .data(registerResponse)
+                .build();
+    }
+
+    @PostMapping("/{userId}/roles")
+    public ApiResponses<Void> assignRole(
+            @PathVariable UUID userId,
+            @RequestParam String roleName) {
+
+        userService.assignRole(userId, roleName);
+        return ApiResponses.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Role assigned successfully")
                 .build();
     }
 }

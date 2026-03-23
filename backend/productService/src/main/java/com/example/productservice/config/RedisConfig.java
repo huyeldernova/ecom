@@ -21,32 +21,38 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private Integer port;
 
-    @Value("${spring.data.redis.username}")
-    private String username;
-
-    @Value("${spring.data.redis.password}")
-    private String password;
+//    @Value("${spring.data.redis.username}")
+//    private String username;
+//
+//    @Value("${spring.data.redis.password}")
+//    private String password;
 
     @Value("${spring.data.redis.ssl.enabled}")
     private boolean sslEnabled;
 
+//    @Bean
+//    public LettuceConnectionFactory lettuceConnectionFactory(){
+//        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
+//        if(username != null && !username.isEmpty()){
+//            redisConfig.setUsername(username);
+//        }
+//        if(password != null && !password.isEmpty()){
+//            redisConfig.setPassword(password);
+//        }
+//
+//        LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfigBuilder = LettuceClientConfiguration.builder();
+//
+//        if(sslEnabled){
+//            clientConfigBuilder.useSsl();
+//        }
+//
+//        return new LettuceConnectionFactory(redisConfig, clientConfigBuilder.build());
+//    }
+
     @Bean
     public LettuceConnectionFactory lettuceConnectionFactory(){
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
-        if(username != null && !username.isEmpty()){
-            redisConfig.setUsername(username);
-        }
-        if(password != null && !password.isEmpty()){
-            redisConfig.setPassword(password);
-        }
-
-        LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfigBuilder = LettuceClientConfiguration.builder();
-
-        if(sslEnabled){
-            clientConfigBuilder.useSsl();
-        }
-
-        return new LettuceConnectionFactory(redisConfig, clientConfigBuilder.build());
+        return new LettuceConnectionFactory(redisConfig);
     }
 
     @Bean

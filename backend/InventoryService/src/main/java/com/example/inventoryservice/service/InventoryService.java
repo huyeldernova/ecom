@@ -37,9 +37,10 @@ public class InventoryService {
             throw new AppException(ErrorCode.OUT_OF_STOCK);
         }
 
-        Integer newQuantity = inventory.getQuantity() - request.getQuantity();
-        inventory.setQuantity(newQuantity);
-
+        inventory.setQuantity(inventory.getQuantity() - request.getQuantity());
+        inventory.setReservedQuantity(
+                Math.max(0, inventory.getReservedQuantity() - request.getQuantity())
+        );
 
         inventoryRepository.save(inventory);
 
@@ -99,21 +100,11 @@ public class InventoryService {
         }
         Inventory inventory = Inventory.builder()
                 .productVariantId(request.getProductVariantId())
-                .quantity(request.getQuantity())
+                .quantity(0)
                 .reservedQuantity(0)
                 .build();
 
         inventoryRepository.save(inventory);
-
-        InventoryTransaction transaction = InventoryTransaction.builder()
-                .inventory(inventory)
-                .type(TransactionType.IMPORT)
-                .quantity(request.getQuantity())
-                .reason("initial_stock")
-                .build();
-
-        inventoryTransactionRepository.save(transaction);
-
 
         return toInventoryResponse(inventory);
     }
@@ -124,8 +115,10 @@ public class InventoryService {
         Inventory inventory = inventoryRepository.findByProductVariantId(request.getProductVariantId())
                 .orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_FOUND));
 
-        Integer newReservedQuantity = inventory.getReservedQuantity() - request.getQuantity();
-        inventory.setReservedQuantity(newReservedQuantity);
+        inventory.setQuantity(inventory.getQuantity() + request.getQuantity());
+        inventory.setReservedQuantity(
+                Math.max(0, inventory.getReservedQuantity() - request.getQuantity())
+        );
 
         inventoryRepository.save(inventory);
 
@@ -176,6 +169,7 @@ public class InventoryService {
         return toInventoryResponse(inventory);
     }
 
+    @Transactional(readOnly = true)
     public PageResponse<InventoryTransactionResponse>getAllTransactions(TransactionFilterRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 

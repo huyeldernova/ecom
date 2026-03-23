@@ -58,11 +58,12 @@ public class CartController {
     @ResponseStatus(HttpStatus.CREATED)
     public com.example.cartservice.dto.ApiResponses<CartResponse> addItem(
             @Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
+            @RequestHeader("Authorization") String token,
             @RequestBody @Valid AddItemRequest request) {
         return com.example.cartservice.dto.ApiResponses.<CartResponse>builder()
                 .code(201)
                 .message("Item added to cart successfully")
-                .data(cartService.addItem(getUserId(jwt), request))
+                .data(cartService.addItem(getUserId(jwt), request, token))
                 .build();
     }
 
@@ -101,11 +102,12 @@ public class CartController {
     public com.example.cartservice.dto.ApiResponses<CartResponse> updateVariant(
             @Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt,
             @Parameter(description = "ID của cart item", required = true) @PathVariable UUID id,
+            @RequestHeader("Authorization") String token,
             @RequestBody @Valid UpdateVariantRequest request) {
         return com.example.cartservice.dto.ApiResponses.<CartResponse>builder()
                 .code(200)
                 .message("Variant updated successfully")
-                .data(cartService.updateVariant(getUserId(jwt), id, request))
+                .data(cartService.updateVariant(getUserId(jwt), id, request, token))
                 .build();
     }
 

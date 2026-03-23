@@ -7,7 +7,7 @@ import org.springframework.web.service.annotation.DeleteExchange;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 
-@HttpExchange(url = "http://localhost:8082/cart")
+@HttpExchange(url = "http://localhost:8083/cart")
 public interface CartClient {
     @GetExchange("/api/v1/cart")
     ApiResponses<CartResponse> getCart(@RequestHeader("Authorization") String token);
