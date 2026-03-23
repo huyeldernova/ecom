@@ -41,6 +41,11 @@ public class OrderService {
 
     private static final String INTERNAL_API_KEY = "super-secret-internal-key-123";
 
+    private static final List<OrderStatus> ACTIVE_STATUSES = List.of(
+            OrderStatus.CONFIRMED,
+            OrderStatus.SHIPPING
+    );
+
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
@@ -51,28 +56,33 @@ public class OrderService {
     private final InventoryClient inventoryClient;
 
 
-    @Transactional
-    public OrderResponse createOrder(CreateOrderRequest request, UUID userId, String token)  {
 
-        if(orderRepository.existsByUserIdAndStatus(userId,OrderStatus.PENDING)){
-            throw new AppException(ErrorCode.ORDER_ALREADY_PENDING);
+
+    @Transactional
+    public OrderResponse createOrder(CreateOrderRequest request, UUID userId, String token) {
+
+        long activeOrderCount = orderRepository.countByUserIdAndStatusIn(userId, ACTIVE_STATUSES);
+        if (activeOrderCount > 0) {
+            throw new AppException(ErrorCode.HAS_ACTIVE_ORDER);
         }
 
+        // 1. Lấy cart
         CartResponse cart;
-        try{
+        try {
             cart = cartClient.getCart(token).getData();
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new AppException(ErrorCode.CART_SERVICE_UNAVAILABLE);
         }
 
-        if(cart.getCartItems() == null || cart.getCartItems().isEmpty()){
+        if (cart.getCartItems() == null || cart.getCartItems().isEmpty()) {
             throw new AppException(ErrorCode.CART_EMPTY);
         }
 
+        // 2. Build order items từ cart
         List<OrderItem> orderItems = new ArrayList<>();
-        for(CartItemResponse item : cart.getCartItems()){
+        for (CartItemResponse item : cart.getCartItems()) {
             VariantResponse variant;
-            try{
+            try {
                 variant = productClient.getVariantById(token, item.getProductVariantId()).getData();
             } catch (Exception e) {
                 throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
@@ -85,7 +95,6 @@ public class OrderService {
             BigDecimal subtotal = item.getSnapshotPrice()
                     .multiply(BigDecimal.valueOf(item.getQuantity()));
 
-
             OrderItem orderItem = OrderItem.builder()
                     .productVariantId(item.getProductVariantId())
                     .productName(variant.getProductName())
@@ -95,23 +104,23 @@ public class OrderService {
                     .subtotal(subtotal)
                     .build();
 
-            // add vào list
             orderItems.add(orderItem);
         }
 
+        // 3. Tính tổng tiền
         BigDecimal totalAmount = orderItems.stream()
                 .map(OrderItem::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        // 4. Convert shippingAddress sang JSON
         String shippingAddressJson;
-
-        try{
-             shippingAddressJson = objectMapper.writeValueAsString(
-                    request.getShippingAddress());
-        }catch(JacksonException  e){
+        try {
+            shippingAddressJson = objectMapper.writeValueAsString(request.getShippingAddress());
+        } catch (JacksonException e) {
             throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 
+        // 5. Lưu order
         Order order = Order.builder()
                 .userId(userId)
                 .totalAmount(totalAmount)
@@ -124,32 +133,36 @@ public class OrderService {
         orderItems.forEach(item -> item.setOrder(order));
         orderItemRepository.saveAll(orderItems);
 
+        // 6. Reserve stock
         Map<UUID, Integer> reservedItems = new LinkedHashMap<>();
         for (CartItemResponse item : cart.getCartItems()) {
             try {
-
-                inventoryClient.reserveStock(token, ReserveStockRequest.builder()
-                        .productVariantId(item.getProductVariantId())
-                        .quantity(item.getQuantity())
-                        .orderId(order.getId())
-                        .build());
+                inventoryClient.reserveStock(
+                        INTERNAL_API_KEY,
+                        ReserveStockRequest.builder()
+                                .productVariantId(item.getProductVariantId())
+                                .quantity(item.getQuantity())
+                                .orderId(order.getId())
+                                .build()
+                );
                 reservedItems.put(item.getProductVariantId(), item.getQuantity());
 
             } catch (Exception e) {
-
                 log.error("Failed to reserve stock: {}", item.getProductVariantId(), e);
+
+                // Rollback: release các item đã reserve trước đó
                 reservedItems.forEach((variantId, quantity) -> {
-
                     try {
-
-                        inventoryClient.releaseStock(token, ReleaseStockRequest.builder()
-                                .productVariantId(variantId)
-                                .quantity(quantity)
-                                .orderId(order.getId())
-                                .build());
+                        inventoryClient.releaseStock(
+                                INTERNAL_API_KEY,
+                                ReleaseStockRequest.builder()
+                                        .productVariantId(variantId)
+                                        .quantity(quantity)
+                                        .orderId(order.getId())
+                                        .build()
+                        );
                     } catch (Exception releaseEx) {
                         log.error("Failed to release stock: {}", variantId, releaseEx);
-
                     }
                 });
 
@@ -157,9 +170,29 @@ public class OrderService {
             }
         }
 
+        // 7. Clear cart
+        try {
+            cartClient.clearCart(token);
+        } catch (Exception e) {
+            log.warn("Clear cart failed for userId: {}", userId, e);
+        }
+
+        return toOrderResponse(order);
+    }
+
+    @Transactional
+    public OrderResponse checkout(UUID orderId, UUID userId, String token) {
+
+        Order order = orderRepository.findByIdAndUserId(orderId, userId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new AppException(ErrorCode.ORDER_CANNOT_CHECKOUT);
+        }
+
         PaymentRequest paymentRequest = PaymentRequest.builder()
                 .orderId(order.getId())
-                .amount(totalAmount.multiply(BigDecimal.valueOf(100)).longValue())
+                .amount(order.getTotalAmount().longValue())
                 .currency("vnd")
                 .build();
 
@@ -167,38 +200,19 @@ public class OrderService {
         try {
             ApiResponses<PaymentResponse> paymentResponse = paymentClient.createPaymentIntent(token, paymentRequest);
             clientSecret = paymentResponse.getData().getClientSecret();
-
         } catch (Exception e) {
-            log.error("Payment service failed for orderId: {}", order.getId(), e);
-
-            reservedItems.forEach((variantId, quantity) -> {
-                try {
-                    inventoryClient.releaseStock(token, ReleaseStockRequest.builder()
-                            .productVariantId(variantId)
-                            .quantity(quantity)
-                            .orderId(order.getId())
-                            .build());
-                } catch (Exception releaseEx) {
-                    log.error("Failed to release stock: {}", variantId, releaseEx);
-                }
-            });
-
+            log.error("Payment service failed for orderId: {}", orderId, e);
             throw new AppException(ErrorCode.PAYMENT_SERVICE_UNAVAILABLE);
-
         }
 
         OrderResponse response = toOrderResponse(order);
         response.setClientSecret(clientSecret);
-
-        try {
-            cartClient.clearCart(token);
-        } catch (Exception e) {
-            log.warn("Clear cart failed for userId: {}", userId, e);
-        }
-
         return response;
     }
 
+
+
+    @Transactional(readOnly = true)
     public OrderResponse getOrder(UUID orderId, UUID userId) {
 
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
@@ -289,6 +303,7 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    @Transactional(readOnly = true)
     public PageResponse<OrderResponse> getAllOrders(OrderStatus status, int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
@@ -322,27 +337,28 @@ public class OrderService {
             OrderStatus.CANCELLED, List.of()
     );
 
+    @Transactional(readOnly = true)
     public OrderResponse getOrderById(UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         return toOrderResponse(order);
     }
 
-    private OrderResponse toOrderResponse(Order order)  {
+    private OrderResponse toOrderResponse(Order order) {
 
         ShippingAddressDto addressDto;
-
         try {
-            addressDto = objectMapper.readValue( order.getShippingAddress(),
-                    ShippingAddressDto.class);
-        } catch (JacksonException  e) {
+            addressDto = objectMapper.readValue(order.getShippingAddress(), ShippingAddressDto.class);
+        } catch (JacksonException e) {
             throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 
+        List<OrderItemResponse> items = orderItemRepository.findByOrderId(order.getId())
+                .stream()
+                .map(this::toOrderItemResponse)
+                .toList();
+
         return OrderResponse.builder()
-                .orderItems(order.getOrderItems().stream()
-                        .map(this::toOrderItemResponse)
-                        .toList())
                 .id(order.getId())
                 .userId(order.getUserId())
                 .status(order.getStatus())
@@ -350,8 +366,8 @@ public class OrderService {
                 .shippingAddress(addressDto)
                 .note(order.getNote())
                 .createdAt(order.getCreatedAt())
+                .orderItems(items)
                 .build();
-
     }
 
     private OrderItemResponse toOrderItemResponse(OrderItem item) {

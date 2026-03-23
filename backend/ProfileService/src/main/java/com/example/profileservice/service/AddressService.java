@@ -47,6 +47,7 @@ public class AddressService {
 
 
     // Thêm address mới
+    @Transactional
     public AddressResponse addAddress(UUID userId, AddressRequest request){
         UserProfile profile = userProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_FOUND));
@@ -141,6 +142,7 @@ public class AddressService {
     }
 
     // Set default
+    @Transactional
     public void setDefault(UUID userId, UUID addressId){
         UserProfile profile = userProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_FOUND));

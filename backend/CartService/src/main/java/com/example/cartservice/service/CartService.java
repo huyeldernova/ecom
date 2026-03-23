@@ -1,7 +1,9 @@
 package com.example.cartservice.service;
 
+import com.example.cartservice.client.InventoryClient;
 import com.example.cartservice.client.ProductClient;
 import com.example.cartservice.dto.*;
+import com.example.cartservice.dto.client.InventoryResponse;
 import com.example.cartservice.dto.client.VariantResponse;
 import com.example.cartservice.entity.Cart;
 import com.example.cartservice.entity.CartItem;
@@ -29,11 +31,13 @@ public class CartService {
     private final CartRepository cartRepository;
     private final ProductClient productClient;
     private final CartItemRepository cartItemRepository;
+    private final InventoryClient inventoryClient;
 
     @Transactional
     @CacheEvict(value = "carts", key = "#userId")
-    public CartResponse addItem(UUID userId, AddItemRequest request) {
+    public CartResponse addItem(UUID userId, AddItemRequest request, String token) {
 
+        // 1. Tìm hoặc tạo cart
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     Cart newCart = Cart.builder()
@@ -42,33 +46,59 @@ public class CartService {
                             .build();
                     return cartRepository.save(newCart);
                 });
+
+        // 2. Kiểm tra cart còn active không
         if (cart.getStatus().equals(CartStatus.EXPIRED)) {
             throw new AppException(ErrorCode.CART_EXPIRED);
         }
 
-        ApiResponses<VariantResponse> variantResponse = productClient.getVariantById(request.getProductId(), request.getProductVariantId());
+        // 3. Kiểm tra variant có tồn tại và active không
+        ApiResponses<VariantResponse> variantResponse = productClient.getVariantById(
+                token,
+                request.getProductId(),
+                request.getProductVariantId()
+        );
         VariantResponse variant = variantResponse.getData();
 
-        if(Boolean.FALSE.equals(variant.getIsActive())){
+        if (Boolean.FALSE.equals(variant.getIsActive())) {
             throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
         }
 
-//        if(variant.getStockQuantity() <= 0){
-//            throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);
-//        }
+        // 4. Kiểm tra tồn kho từ InventoryService
+        ApiResponses<InventoryResponse> inventoryResponse = inventoryClient.getInventory(
+                token,
+                request.getProductVariantId()
+        );
+        InventoryResponse inventory = inventoryResponse.getData();
 
-        Optional<CartItem> existingItem = cartItemRepository.findByCartAndProductVariantId(cart, request.getProductVariantId());
-        if(existingItem.isPresent()){
+        if (inventory.getAvailableQuantity() < request.getQuantity()) {
+            throw new AppException(ErrorCode.OUT_OF_STOCK);
+        }
+
+        // 5. Thêm hoặc cập nhật item trong cart
+        Optional<CartItem> existingItem = cartItemRepository.findByCartAndProductVariantId(
+                cart,
+                request.getProductVariantId()
+        );
+
+        if (existingItem.isPresent()) {
             CartItem item = existingItem.get();
-            item.setQuantity(item.getQuantity() + request.getQuantity());
+
+            // Kiểm tra tổng quantity sau khi cộng có vượt tồn kho không
+            int newQuantity = item.getQuantity() + request.getQuantity();
+            if (newQuantity > inventory.getAvailableQuantity()) {
+                throw new AppException(ErrorCode.OUT_OF_STOCK);
+            }
+
+            item.setQuantity(newQuantity);
             cartItemRepository.save(item);
-        }else {
+        } else {
             CartItem newItem = CartItem.builder()
                     .cart(cart)
                     .productVariantId(request.getProductVariantId())
                     .quantity(request.getQuantity())
                     .snapshotPrice(variant.getEffectivePrice())
-            .build();
+                    .build();
 
             cart.addItem(newItem);
             cartItemRepository.save(newItem);
@@ -137,12 +167,12 @@ public class CartService {
 
     @Transactional
     @CacheEvict(value = "carts", key = "#userId")
-    public CartResponse updateVariant(UUID userId, UUID itemId, UpdateVariantRequest request) {
+    public CartResponse updateVariant(UUID userId, UUID itemId, UpdateVariantRequest request, String token) {
 
         CartItem item = cartItemRepository.findBydIdAndUserId(itemId, userId)
                 .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
 
-        ApiResponses<VariantResponse> variantResponse = productClient.getVariantById(request.getProductId(), request.getProductVariantId());
+        ApiResponses<VariantResponse> variantResponse = productClient.getVariantById(token, request.getProductId(), request.getProductVariantId());
         VariantResponse variant = variantResponse.getData();
         if(Boolean.FALSE.equals(variant.getIsActive())){
             throw new AppException(ErrorCode.INVALID_PRODUCT_VARIANT);

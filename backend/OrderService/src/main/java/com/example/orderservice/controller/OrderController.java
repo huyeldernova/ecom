@@ -70,11 +70,20 @@ public class OrderController {
                 .build();
     }
 
+    @PostMapping("/{id}/checkout")
+    public ApiResponses<OrderResponse> checkout(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID id) {
 
+        UUID userId = UUID.fromString(jwt.getSubject());
+        String token = "Bearer " + jwt.getTokenValue();
 
-
-
-
+        return ApiResponses.<OrderResponse>builder()
+                .code(200)
+                .message("Checkout success")
+                .data(orderService.checkout(id, userId, token))
+                .build();
+    }
 
 }
 

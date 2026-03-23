@@ -63,6 +63,20 @@ public class UserService {
 
         return RegisterResponse.builder()
                 .email(user.getEmail())
+                .username(user.getUsername())
                 .build();
+    }
+
+    public void assignRole(UUID userId, String roleName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        Role role = roleRepository.findByName(roleName)
+                .orElseGet(() -> roleRepository.save(
+                        Role.builder().name(roleName).build()
+                ));
+
+        user.addRole(role);
+        userRepository.save(user);
     }
 }

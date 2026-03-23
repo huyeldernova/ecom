@@ -17,7 +17,8 @@ public enum ErrorCode {
     CART_ITEM_NOT_FOUND(400, "cart item not found", HttpStatus.BAD_REQUEST),
     INVALID_QUANTITY(400, "invalid quantity", HttpStatus.BAD_REQUEST),
 
-    INVALID_PRODUCT_VARIANT(400, "invalid product variant", HttpStatus.BAD_REQUEST)
+    INVALID_PRODUCT_VARIANT(400, "invalid product variant", HttpStatus.BAD_REQUEST),
+    OUT_OF_STOCK(400, "out of stock", HttpStatus.BAD_REQUEST)
 
     ;
 

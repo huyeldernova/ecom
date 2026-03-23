@@ -2,6 +2,9 @@ package com.example.ecomerce.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "roles")
@@ -13,8 +16,8 @@ import lombok.*;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @UuidGenerator
+    private UUID id;
 
     @Column(unique = true, nullable = false)
     private String name;

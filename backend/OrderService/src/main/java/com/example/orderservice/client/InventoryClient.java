@@ -9,12 +9,18 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
-@HttpExchange(url = "http://localhost:8084/inventory")
+@HttpExchange(url = "http://localhost:8082/inventory")
 public interface InventoryClient {
 
-    @PostExchange("/api/inventories/reserve")
-    ApiResponses<InventoryResponse> reserveStock(@RequestHeader("Authorization") String token, @RequestBody ReserveStockRequest request);
+    @PostExchange("/internal/inventories/reserve")
+    ApiResponses<InventoryResponse> reserveStock(
+            @RequestHeader(value = "X-Internal-Key", defaultValue = "super-secret-internal-key-123") String apiKey,
+            @RequestBody ReserveStockRequest request
+    );
 
-    @PostExchange("/api/inventories/release")
-    ApiResponses<InventoryResponse> releaseStock(@RequestHeader("Authorization") String token, @RequestBody ReleaseStockRequest request);
+    @PostExchange("/internal/inventories/release")
+    ApiResponses<InventoryResponse> releaseStock(
+            @RequestHeader(value = "X-Internal-Key", defaultValue = "super-secret-internal-key-123") String apiKey,
+            @RequestBody ReleaseStockRequest request
+    );
 }
