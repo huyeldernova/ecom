@@ -26,6 +26,7 @@ jwt:
   secret-key: 298d452efb93a5b2eb1005d0bec28a1cc90d4b51ab055e32499119fbe606a61e9f9a8f0f
 
 
+
 internal:
   api-key: super-secret-internal-key-123
 

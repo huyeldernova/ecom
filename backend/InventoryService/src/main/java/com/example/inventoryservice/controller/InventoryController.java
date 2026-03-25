@@ -51,11 +51,30 @@ public class InventoryController {
     ) {
 
         request.setProductVariantId(variantId);
-
         return ApiResponses.<InventoryResponse>builder()
                 .code(1000)
                 .message("Stock imported")
                 .data(inventoryService.importStock(request))
+                .build();
+    }
+
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ApiResponses<PageResponse<InventoryListItemResponse>> getAll(@ModelAttribute InventoryFilterRequest filter) {
+        return ApiResponses.<PageResponse<InventoryListItemResponse>>builder()
+                .code(200)
+                .message("Success")
+                .data(inventoryService.getAll(filter))
+                .build();
+    }
+
+    @GetMapping("/kpis")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ApiResponses<InventoryKPIsResponse> getKPIs() {
+        return ApiResponses.<InventoryKPIsResponse>builder()
+                .code(200).message("Success")
+                .data(inventoryService.getKPIs())
                 .build();
     }
 

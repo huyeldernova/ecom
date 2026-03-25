@@ -17,6 +17,8 @@ import { CartItem } from '@/types/cart.types';
 import ProductImages from '@/components/product/ProductImages';
 import ProductVariants from '@/components/product/ProductVariants';
 import { MOCK_PRODUCTS } from '@/lib/mockData/products.mock';
+import { cartService } from '@/services/cartService';
+
 
 // ─── Quantity Selector ────────────────────────────────────
 const QuantitySelector = ({
@@ -60,9 +62,9 @@ const TrustRow = () => (
 );
 
 // ─── Related Products ─────────────────────────────────────
-const RelatedProducts = ({ category, excludeId }: { category: string; excludeId: string }) => {
+const RelatedProducts = ({ categoryId, excludeId }: { categoryId: string; excludeId: string }) => {
   const related = MOCK_PRODUCTS.filter(
-    (p) => p.category === category && p.id !== excludeId
+    (p) => p.id !== excludeId  // bỏ filter category vì mock dùng string, backend dùng UUID
   ).slice(0, 4);
 
   if (related.length === 0) return null;
@@ -73,7 +75,7 @@ const RelatedProducts = ({ category, excludeId }: { category: string; excludeId:
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {related.map((p) => {
           const v = p.variants[0];
-          const price = v.discountPrice ?? v.price;
+          const price = (v as any).effectivePrice ?? (v as any).discountPrice ?? (v as any).price ?? 0;
           return (
             <Link
               key={p.id}
@@ -156,34 +158,42 @@ export default function ProductDetailPage() {
     );
   }
 
-  const price = selectedVariant.discountPrice ?? selectedVariant.price;
-  const hasDiscount = !!selectedVariant.discountPrice;
-  const discountPct = hasDiscount
-    ? Math.round((1 - selectedVariant.discountPrice! / selectedVariant.price) * 100)
-    : 0;
+const price = selectedVariant.effectivePrice;
+const hasDiscount = false;
+const discountPct = 0;
 
-  // Build image array — use variant image if available, fallback to product image
   const images = product.variants
-    .filter((v) => v.imageUrl)
-    .map((v) => v.imageUrl!)
-    .concat(product.imageUrl)
-    .filter((v, i, a) => a.indexOf(v) === i) // dedupe
+    .filter((v) => v.imageUrls && v.imageUrls.length > 0)
+    .flatMap((v) => v.imageUrls!)
+    .concat(product.thumbnailUrl ?? `https://picsum.photos/400/400?random=${product.id}`)
+    .filter((v, i, a) => a.indexOf(v) === i)
     .slice(0, 5);
 
-  const handleAddToCart = () => {
-    const item: CartItem = {
-      id: `${product.id}-${selectedVariant.id}-${Date.now()}`,
-      productId: product.id,
-      productVariantId: selectedVariant.id,
-      productName: product.name,
-      variantName: selectedVariant.variantName,
-      imageUrl: product.imageUrl,
-      quantity,
-      snapshotPrice: price,
-    };
-    addItem(item);
-    toast.success(`Đã thêm ${quantity} sản phẩm vào giỏ hàng 🛒`);
-    openCartDrawer();
+  const handleAddToCart = async () => {
+    try {
+      await cartService.addItem({
+        productId: product.id,
+        productVariantId: selectedVariant.id,
+        quantity,
+      });
+
+      // Cũng update local store để UI hiện số lượng
+      addItem({
+        id: `${product.id}-${selectedVariant.id}-${Date.now()}`,
+        productId: product.id,
+        productVariantId: selectedVariant.id,
+        productName: product.name,
+        variantName: selectedVariant.variantName,
+        imageUrl: product.thumbnailUrl,
+        quantity,
+        snapshotPrice: selectedVariant.effectivePrice,
+      });
+
+      toast.success(`Đã thêm ${quantity} sản phẩm vào giỏ hàng 🛒`);
+      openCartDrawer();
+    } catch {
+      toast.error('Không thể thêm vào giỏ hàng');
+    }
   };
 
   return (
@@ -195,10 +205,10 @@ export default function ProductDetailPage() {
         <Link href="/products" className="hover:text-primary transition-colors">Sản phẩm</Link>
         <ChevronRight className="w-3.5 h-3.5" />
         <Link
-          href={`/products?category=${product.category}`}
+          href={`/products`}
           className="hover:text-primary transition-colors"
         >
-          {product.category}
+          {product.brand}
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
         <span className="text-navy font-medium truncate max-w-xs">{product.name}</span>
@@ -213,10 +223,10 @@ export default function ProductDetailPage() {
           {/* Category + share */}
           <div className="flex items-center justify-between">
             <Link
-              href={`/products?category=${product.category}`}
+              href={`/products`}
               className="text-sm text-primary font-medium hover:underline"
             >
-              {product.category}
+              {product.brand}
             </Link>
             <button
               onClick={() => {
@@ -255,7 +265,7 @@ export default function ProductDetailPage() {
             {hasDiscount && (
               <>
                 <span className="text-lg text-light-gray line-through">
-                  {formatPrice(selectedVariant.price)}
+                  {formatPrice(product.price)}
                 </span>
                 <span className="bg-primary/10 text-primary text-sm font-bold px-2.5 py-0.5 rounded-lg">
                   -{discountPct}%
@@ -316,7 +326,7 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Related */}
-      <RelatedProducts category={product.category} excludeId={product.id} />
+      <RelatedProducts categoryId={product.categoryId} excludeId={product.id} />
     </div>
   );
 }

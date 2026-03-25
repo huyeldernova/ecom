@@ -34,7 +34,7 @@ const CartDrawer = () => {
   return (
     <div className="fixed inset-0 z-50 flex">
       {/* Overlay */}
-      <div className="modal-overlay flex-1" onClick={closeCartDrawer} />
+      <div className="flex-1 bg-black/50" onClick={closeCartDrawer} />
 
       {/* Drawer */}
       <div className="w-full max-w-sm bg-white shadow-2xl flex flex-col animate-slide-in-right">

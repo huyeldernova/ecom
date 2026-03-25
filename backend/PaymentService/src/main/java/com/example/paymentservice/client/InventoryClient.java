@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
-@HttpExchange(url = "http://localhost:8084/inventory")
+@HttpExchange(url = "http://localhost:8082/inventory")
 public interface InventoryClient {
 
     @PostExchange("/internal/inventories/deduct")

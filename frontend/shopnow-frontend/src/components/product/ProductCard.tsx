@@ -2,43 +2,21 @@
 
 import Link from 'next/link';
 import { ShoppingCart, Heart } from 'lucide-react';
-import { useCartStore } from '@/stores/cartStore';
 import { useUIStore } from '@/stores/uiStore';
 import { toast } from '@/components/ui/Toast';
 import { formatPrice } from '@/lib/utils';
-import { Product } from '@/types/product.types';
-import { CartItem } from '@/types/cart.types';
+import { ProductSummary } from '@/types/product.types';  // ✅ đổi sang ProductSummary
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductSummary;  // ✅
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const addItem = useCartStore((s) => s.addItem);
   const openCartDrawer = useUIStore((s) => s.openCartDrawer);
-
-  if (!product.variants || product.variants.length === 0) return null;
-  const defaultVariant = product.variants[0];
-  const price = defaultVariant.discountPrice ?? defaultVariant.price;
-  const hasDiscount = !!defaultVariant.discountPrice;
-  const discountPct = hasDiscount
-    ? Math.round((1 - defaultVariant.discountPrice! / defaultVariant.price) * 100)
-    : 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    const item: CartItem = {
-      id: `${product.id}-${defaultVariant.id}-${Date.now()}`,
-      productId: product.id,
-      productVariantId: defaultVariant.id,
-      productName: product.name,
-      variantName: defaultVariant.variantName,
-      imageUrl: product.imageUrl,
-      quantity: 1,
-      snapshotPrice: price,
-    };
-    addItem(item);
-    toast.success(`Đã thêm vào giỏ hàng`);
+    toast.success(`Vào trang sản phẩm để chọn variant`);
     openCartDrawer();
   };
 
@@ -50,15 +28,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
       {/* Image */}
       <div className="relative overflow-hidden bg-background aspect-square">
         <img
-          src={product.imageUrl}
+          src={product.thumbnailUrl || `https://picsum.photos/400/400?random=${product.id}`}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        {hasDiscount && (
-          <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-lg">
-            -{discountPct}%
-          </span>
-        )}
         <button
           onClick={(e) => e.preventDefault()}
           className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow-md
@@ -74,27 +47,19 @@ const ProductCard = ({ product }: ProductCardProps) => {
             className="w-full py-2 bg-navy text-white text-sm font-semibold rounded-xl
                        hover:bg-primary transition-colors flex items-center justify-center gap-2"
           >
-            <ShoppingCart className="w-4 h-4" /> Thêm vào giỏ
+            <ShoppingCart className="w-4 h-4" /> Xem sản phẩm
           </button>
         </div>
       </div>
 
       {/* Info */}
       <div className="p-4">
-        <p className="text-xs text-primary font-medium mb-1">{product.category}</p>
+        <p className="text-xs text-primary font-medium mb-1">{product.brand}</p>
         <h3 className="font-semibold text-navy text-sm leading-snug line-clamp-2 group-hover:text-primary transition-colors">
           {product.name}
         </h3>
         <div className="flex items-center justify-between mt-3">
-          <div className="flex items-baseline gap-1.5">
-            <span className="font-bold text-navy">{formatPrice(price)}</span>
-            {hasDiscount && (
-              <span className="text-xs text-light-gray line-through">
-                {formatPrice(defaultVariant.price)}
-              </span>
-            )}
-          </div>
-          <span className="text-xs text-light-gray">{product.variants.length} loại</span>
+          <span className="font-bold text-navy">{formatPrice(product.price)}</span>
         </div>
       </div>
     </Link>

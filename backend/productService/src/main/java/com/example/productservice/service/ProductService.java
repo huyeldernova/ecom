@@ -1,5 +1,6 @@
 package com.example.productservice.service;
 
+import com.example.event.VariantCreatedEvent;
 import com.example.productservice.dto.*;
 import com.example.productservice.entity.Category;
 import com.example.productservice.entity.Product;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final KafkaTemplate<String, VariantCreatedEvent> kafkaTemplate;
 
     @Transactional
     public ProductDetailResponse create (ProductRequest request){
@@ -65,8 +68,13 @@ public class ProductService {
                     throw new AppException(ErrorCode.SKU_ALREADY_EXISTS);
                 }
 
+                String sku = (variantRequest.getSku() != null && !variantRequest.getSku().isBlank())
+                        ? variantRequest.getSku()
+                        : generateSku(request.getBrand(), request.getName(),
+                        variantRequest.getColor(), variantRequest.getSize());
+
                 ProductVariant variant = ProductVariant.builder()
-                        .sku(variantRequest.getSku())
+                        .sku(sku)
                         .size(variantRequest.getSize())
                         .color(variantRequest.getColor())
                         .finalPrice(variantRequest.getFinalPrice())
@@ -77,6 +85,16 @@ public class ProductService {
             }
         }
         productRepository.save(product);
+
+        for (ProductVariant v : product.getVariants()) {
+            kafkaTemplate.send("variant.created",
+                    VariantCreatedEvent.builder()
+                            .variantId(v.getId())
+                            .productId(product.getId())
+                            .sku(v.getSku())
+                            .build()
+            );
+        }
 
         return toDetailResponse(product);
     }
@@ -90,9 +108,14 @@ public class ProductService {
             throw new AppException(ErrorCode.SKU_ALREADY_EXISTS);
         }
 
+        String sku = (request.getSku() != null && !request.getSku().isBlank())
+                ? request.getSku()
+                : generateSku(product.getBrand(), product.getName(),
+                request.getColor(), request.getSize());
+
         ProductVariant variant = ProductVariant.builder()
                 .product(product)
-                .sku(request.getSku())
+                .sku(sku)
                 .size(request.getSize())
                 .color(request.getColor())
                 .finalPrice(request.getFinalPrice())
@@ -102,6 +125,14 @@ public class ProductService {
         product.addVariant(variant);
 
         ProductVariant saved = productVariantRepository.save(variant);
+
+        kafkaTemplate.send("variant.created",
+                VariantCreatedEvent.builder()
+                        .variantId(saved.getId())
+                        .productId(product.getId())
+                        .sku(saved.getSku())
+                        .build()
+        );
 
         return toVariantResponse(saved);
     }
@@ -358,5 +389,36 @@ public class ProductService {
                 .categoryId(product.getCategory().getId())
                 .build();
     }
+
+    private String generateSku(String brand, String productName, String color, String size) {
+        String brandPart = brand != null
+                ? brand.toUpperCase().replaceAll("\\s+", "").substring(0, Math.min(4, brand.length()))
+                : "PROD";
+
+        String namePart = productName != null
+                ? productName.toUpperCase().replaceAll("\\s+", "").substring(0, Math.min(4, productName.length()))
+                : "ITEM";
+
+        String colorPart = (color != null && !color.isBlank())
+                ? color.toUpperCase().replaceAll("\\s+", "").substring(0, Math.min(3, color.length()))
+                : "NA";
+
+        String sizePart = (size != null && !size.isBlank())
+                ? size.toUpperCase().replaceAll("\\s+", "")
+                : "OS";
+
+        String random = String.valueOf((int)(Math.random() * 9000) + 1000);
+
+        String sku = brandPart + "-" + namePart + "-" + colorPart + "-" + sizePart + "-" + random;
+
+        // Đảm bảo không bị trùng
+        if (productVariantRepository.existsBySku(sku)) {
+            random = String.valueOf((int)(Math.random() * 9000) + 1000);
+            sku = brandPart + "-" + namePart + "-" + colorPart + "-" + sizePart + "-" + random;
+        }
+
+        return sku;
+    }
+
 
 }

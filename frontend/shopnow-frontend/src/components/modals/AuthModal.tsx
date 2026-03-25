@@ -133,14 +133,16 @@ const LoginTab = ({ onSuccess }: { onSuccess: () => void }) => {
   const onSubmit = async (data: LoginForm) => {
     try {
       const res = await authService.login({ email: data.email, password: data.password });
-      // Phase 1-2: mock user
+      const role = res.authorities?.includes('ADMIN') ? 'ADMIN' : 'USER';
+
       login(res.accessToken, {
-        id: 'mock-user-id',
+        id: res.userId,
         email: data.email,
-        firstName: 'Nguyễn',
-        lastName: 'Văn A',
-        role: 'USER',
+        firstName: '',
+        lastName: '',
+        role,
       });
+
       toast.success('Đăng nhập thành công! Chào mừng bạn trở lại 👋');
       onSuccess();
     } catch {
@@ -249,14 +251,18 @@ const RegisterTab = ({ onSuccess }: { onSuccess: () => void }) => {
         firstName: data.firstName,
         lastName: data.lastName,
       });
-      // Auto login after register (Phase 1-2 mock)
-      login('mock-access-token', {
-        id: 'mock-user-id',
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        role: 'USER',
-      });
+     const loginRes = await authService.login({
+       email: data.email,
+       password: data.password,
+     });
+     const role = loginRes.authorities?.includes('ADMIN') ? 'ADMIN' : 'USER';
+     login(loginRes.accessToken, {
+       id: loginRes.userId,
+       email: data.email,
+       firstName: data.firstName,
+       lastName: data.lastName,
+       role,
+     });
       toast.success('Đăng ký thành công! Chào mừng bạn đến với ShopNow 🎉');
       onSuccess();
     } catch {
@@ -386,29 +392,37 @@ const AuthModal = () => {
     return () => document.removeEventListener('keydown', handler);
   }, [closeAuthModal]);
 
-  // Lock body scroll when open
+
   useEffect(() => {
-    document.body.style.overflow = authModalOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    if (authModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [authModalOpen]);
 
   if (!authModalOpen) return null;
 
   const handleSuccess = () => {
     setSuccess(true);
-    setTimeout(() => closeAuthModal(), 1500);
+    setTimeout(() => {
+      document.body.style.overflow = '';
+      closeAuthModal();
+    }, 800);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       {/* Overlay */}
       <div
-        className="modal-overlay"
+        className="modal-overlay absolute inset-0"
         onClick={closeAuthModal}
       />
-
       {/* Modal */}
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl z-10 animate-scale-in overflow-hidden">
+      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl z-50 animate-scale-in overflow-hidden">
         {/* Close button */}
         <button
           onClick={closeAuthModal}

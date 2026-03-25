@@ -12,7 +12,7 @@ import org.springframework.web.service.annotation.PatchExchange;
 
 import java.util.UUID;
 
-@HttpExchange(url = "http://localhost:8083/order")
+@HttpExchange(url = "http://localhost:8084/order")
 public interface OrderClient {
     @PatchExchange("/api/v1/orders/internal/{id}/status")
     ApiResponses<Void> updateOrderStatus(@PathVariable("id") UUID orderId, @RequestHeader("X-Internal-Key") String apiKey, @RequestBody UpdateOrderStatusRequest request);

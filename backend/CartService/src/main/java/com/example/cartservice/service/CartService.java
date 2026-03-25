@@ -28,6 +28,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CartService {
 
+    private static final String INTERNAL_API_KEY = "super-secret-internal-key-123";
+
     private final CartRepository cartRepository;
     private final ProductClient productClient;
     private final CartItemRepository cartItemRepository;
@@ -66,7 +68,7 @@ public class CartService {
 
         // 4. Kiểm tra tồn kho từ InventoryService
         ApiResponses<InventoryResponse> inventoryResponse = inventoryClient.getInventory(
-                token,
+                INTERNAL_API_KEY,
                 request.getProductVariantId()
         );
         InventoryResponse inventory = inventoryResponse.getData();
@@ -93,11 +95,19 @@ public class CartService {
             item.setQuantity(newQuantity);
             cartItemRepository.save(item);
         } else {
+            String variantName = java.util.stream.Stream.of(variant.getSize(), variant.getColor())
+                    .filter(s -> s != null && !s.isBlank())
+                    .collect(java.util.stream.Collectors.joining(" - "));
+
             CartItem newItem = CartItem.builder()
                     .cart(cart)
                     .productVariantId(request.getProductVariantId())
                     .quantity(request.getQuantity())
                     .snapshotPrice(variant.getEffectivePrice())
+                    .productName(variant.getProductName())
+                    .variantName(variantName)
+                    .imageUrl(variant.getImageUrls() != null && !variant.getImageUrls().isEmpty()
+                            ? variant.getImageUrls().get(0) : null)
                     .build();
 
             cart.addItem(newItem);
@@ -208,6 +218,9 @@ public class CartService {
                 .productVariantId(item.getProductVariantId())
                 .quantity(item.getQuantity())
                 .snapshotPrice(item.getSnapshotPrice())
+                .productName(item.getProductName())
+                .variantName(item.getVariantName())
+                .imageUrl(item.getImageUrl())
                 .build();
     }
 

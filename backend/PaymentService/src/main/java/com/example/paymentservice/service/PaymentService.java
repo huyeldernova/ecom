@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -44,10 +43,23 @@ public class PaymentService {
 
     public PaymentResponse createPaymentIntent(PaymentRequest request, UUID userId)  {
 
+        long amount;
+        String currency;
+
+        if ("vnd".equalsIgnoreCase(request.getCurrency())) {
+
+            amount = Math.max(request.getAmount() * 100L / 25000L, 50L);
+            currency = "usd";
+        } else {
+            amount = request.getAmount() * 100L;
+            currency = request.getCurrency();
+        }
+
+
         try{
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(request.getAmount())
-                    .setCurrency(request.getCurrency())
+                    .setAmount(amount)
+                    .setCurrency(currency)
                     .putMetadata("orderId", request.getOrderId().toString())
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder()

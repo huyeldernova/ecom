@@ -8,7 +8,7 @@ import ProductFilters from '@/components/product/ProductFilters';
 import ProductSort from '@/components/product/ProductSort';
 import Pagination from '@/components/ui/Pagination';
 import { productService } from '@/services/productService';
-import { Product } from '@/types/product.types';
+import { ProductSummary } from '@/types/product.types';
 import { PageResponse } from '@/types/common.types';
 import { MOCK_CATEGORIES } from '@/lib/mockData/products.mock';
 
@@ -52,7 +52,7 @@ const ActiveFilters = ({
 // ─── Page content (uses useSearchParams) ─────────────────
 const ProductListContent = () => {
   const searchParams = useSearchParams();
-  const [data, setData] = useState<PageResponse<Product> | null>(null);
+  const [data, setData] = useState<PageResponse<ProductSummary> | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
@@ -75,8 +75,8 @@ const ProductListContent = () => {
           page,
           size: 12,
         });
-        // Cast về Product[] vì mock data dùng Product thay vì ProductSummary
-        setData(result as unknown as PageResponse<Product>);
+
+        setData(result);
       } catch (err) {
         console.error(err);
       } finally {

@@ -31,6 +31,10 @@ public class Inventory extends BaseEntity {
     @Version
     private Long version;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer threshold = 10;
+
     @Transient
     public Integer getAvailableQuantity() {
         return quantity - reservedQuantity;

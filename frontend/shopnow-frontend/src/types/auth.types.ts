@@ -1,5 +1,5 @@
 export interface User {
-  id: string; // UUID
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -19,8 +19,10 @@ export interface RegisterRequest {
 }
 
 export interface LoginResponse {
+  userId: string;
   accessToken: string;
   refreshToken: string;
+  authorities: string[];
 }
 
 export interface AuthState {

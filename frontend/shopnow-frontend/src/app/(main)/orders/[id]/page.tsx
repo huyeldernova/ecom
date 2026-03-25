@@ -3,10 +3,12 @@
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight, Package, Truck, CheckCircle, Clock, MapPin } from 'lucide-react';
-import { MOCK_ORDERS } from '@/lib/mockData/orders.mock';
 import { OrderStatusBadge } from '@/components/ui/Badge';
 import { formatPrice, formatDate } from '@/lib/utils';
 import { OrderStatus } from '@/types/order.types';
+import { useState, useEffect } from 'react';
+import { orderService } from '@/services/orderService';
+import { Order } from '@/types/order.types';
 
 const TIMELINE_STEPS: { status: OrderStatus; label: string; desc: string; icon: React.ReactNode }[] = [
   { status: 'PENDING', label: 'Đặt hàng', desc: 'Đơn hàng đã được tiếp nhận', icon: <Clock className="w-4 h-4" /> },
@@ -19,7 +21,15 @@ const STATUS_ORDER: OrderStatus[] = ['PENDING', 'CONFIRMED', 'SHIPPING', 'DELIVE
 
 export default function OrderTrackingPage() {
   const { id } = useParams<{ id: string }>();
-  const order = MOCK_ORDERS.find((o) => o.id === id);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    orderService.getOrderById(id)
+      .then(setOrder)
+      .catch(() => setOrder(null))
+      .finally(() => setLoading(false));
+  }, [id]);
 
   if (!order) {
     return (
