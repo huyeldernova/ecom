@@ -2,7 +2,6 @@ import axios, { AxiosInstance } from 'axios';
 import { useAuthStore } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
 
-// ─── Factory: tạo axios instance riêng cho từng service ───
 const createApiInstance = (baseURL: string): AxiosInstance => {
   const instance = axios.create({
     baseURL,
@@ -10,14 +9,12 @@ const createApiInstance = (baseURL: string): AxiosInstance => {
     headers: { 'Content-Type': 'application/json' },
   });
 
-  // Request interceptor — tự động attach JWT
   instance.interceptors.request.use((config) => {
     const token = useAuthStore.getState().accessToken;
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   });
 
-  // Response interceptor — xử lý lỗi chung
   instance.interceptors.response.use(
     (res) => res,
     (error) => {
@@ -32,22 +29,24 @@ const createApiInstance = (baseURL: string): AxiosInstance => {
   return instance;
 };
 
-// ─── Một instance cho mỗi microservice ───────────────────
 export const authApi = createApiInstance(
-  process.env.NEXT_PUBLIC_AUTH_SERVICE_URL ?? 'http://localhost:8080'
+  process.env.NEXT_PUBLIC_AUTH_SERVICE_URL ?? 'http://localhost:8080/authentication'
 );
 export const productApi = createApiInstance(
-  process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL ?? 'http://localhost:8081'
-);
-export const cartApi = createApiInstance(
-  process.env.NEXT_PUBLIC_CART_SERVICE_URL ?? 'http://localhost:8082'
-);
-export const orderApi = createApiInstance(
-  process.env.NEXT_PUBLIC_ORDER_SERVICE_URL ?? 'http://localhost:8083'
+  process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL ?? 'http://localhost:8081/product'
 );
 export const inventoryApi = createApiInstance(
-  process.env.NEXT_PUBLIC_INVENTORY_SERVICE_URL ?? 'http://localhost:8084'
+  process.env.NEXT_PUBLIC_INVENTORY_SERVICE_URL ?? 'http://localhost:8082/inventory'
+);
+export const cartApi = createApiInstance(
+  process.env.NEXT_PUBLIC_CART_SERVICE_URL ?? 'http://localhost:8083/cart'
+);
+export const orderApi = createApiInstance(
+  process.env.NEXT_PUBLIC_ORDER_SERVICE_URL ?? 'http://localhost:8084/order'
 );
 export const paymentApi = createApiInstance(
-  process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL ?? 'http://localhost:8085'
+  process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL ?? 'http://localhost:8085/payment'
+);
+export const profileApi = createApiInstance(
+  process.env.NEXT_PUBLIC_PROFILE_SERVICE_URL ?? 'http://localhost:8086/profile'
 );

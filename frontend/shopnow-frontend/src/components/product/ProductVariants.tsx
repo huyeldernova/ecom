@@ -21,7 +21,7 @@ const ProductVariants = ({ variants, selected, onChange }: ProductVariantsProps)
         {variants.map((v) => {
           const isSelected = v.id === selected.id;
           const isDisabled = !v.isActive;
-          const price = v.discountPrice ?? v.price;
+          const price = v.effectivePrice;
 
           return (
             <button
@@ -37,7 +37,7 @@ const ProductVariants = ({ variants, selected, onChange }: ProductVariantsProps)
               )}
             >
               <span>{v.variantName}</span>
-              {v.discountPrice && (
+              {v.finalPrice && (
                 <span className="ml-2 text-xs text-primary font-semibold">
                   {formatPrice(price)}
                 </span>

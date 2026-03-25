@@ -12,9 +12,9 @@ import java.util.UUID;
 @HttpExchange(url = "http://localhost:8082/inventory")
 public interface InventoryClient {
 
-    @GetExchange("/api/inventories/{variantId}")
+    @GetExchange("/internal/inventories/{variantId}")
     ApiResponses<InventoryResponse> getInventory(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader("X-Internal-Key") String apiKey,
             @PathVariable UUID variantId
     );
 }

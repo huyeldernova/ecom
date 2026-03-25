@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+
 import Link from 'next/link';
 import {
   Search, ShoppingCart, Heart, User, Menu, X,
@@ -11,6 +11,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import { cn } from '@/lib/utils';
 import { MOCK_CATEGORIES } from '@/lib/mockData/products.mock';
+import { useState, useEffect, useRef } from 'react';
+import { cartService } from '@/services/cartService';
 
 // ─── Top Promo Bar ────────────────────────────────────────
 const PromoBar = () => (
@@ -358,7 +360,7 @@ const MobileMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) =
 
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
-      <div className="modal-overlay" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-xl flex flex-col animate-slide-in-right">
         <div className="flex items-center justify-between px-4 py-4 border-b border-border">
           <span className="font-head font-bold text-xl text-primary">ShopNow</span>
@@ -416,6 +418,30 @@ const Header = () => {
     window.addEventListener('scroll', handler);
     return () => window.removeEventListener('scroll', handler);
   }, []);
+
+  const { isAuthenticated } = useAuthStore();
+  const clearCart = useCartStore((s) => s.clearCart);
+  const addItem = useCartStore((s) => s.addItem);
+
+  useEffect(() => {
+    clearCart();
+    if (!isAuthenticated) return;
+
+    cartService.getCart().then((cart) => {
+      useCartStore.setState({
+        items: cart.cartItems.map((item: any) => ({
+          id: item.id,
+          productId: '',
+          productVariantId: item.productVariantId,
+          productName: item.productName ?? '',
+          variantName: item.variantName ?? '',
+          imageUrl: item.imageUrl ?? '',
+          quantity: item.quantity,
+          snapshotPrice: Number(item.snapshotPrice),
+        }))
+      });
+    }).catch(() => {});
+  }, [isAuthenticated]);
 
   return (
     <>

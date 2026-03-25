@@ -1,6 +1,5 @@
 package com.example.paymentservice.dto.client.order;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -10,12 +9,21 @@ import lombok.*;
 @Builder
 public class ShippingAddressDto {
 
-    @NotBlank(message = "Address is required")
-    private String address;
+    private String firstName;
 
-    @NotBlank(message = "Phone is required")
+    private String lastName;
+
+    private String email;
+
     private String phone;
 
-    @NotBlank(message = "Full name is required")
-    private String fullName;
+    private String street;
+
+    private String city;
+
+    private String state;
+
+    private String zipCode;
+
+    private String country;
 }

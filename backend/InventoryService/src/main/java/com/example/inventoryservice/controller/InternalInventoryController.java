@@ -8,6 +8,8 @@ import com.example.inventoryservice.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/internal/inventories")
 @RequiredArgsConstructor
@@ -77,6 +79,20 @@ public class InternalInventoryController {
                 .code(1000)
                 .message("Stock released")
                 .data(inventoryService.releaseStock(request))
+                .build();
+    }
+
+    @GetMapping("/{variantId}")
+    public ApiResponses<InventoryResponse> getInventory(
+            @RequestHeader("X-Internal-Key") String apiKey,
+            @PathVariable UUID variantId) {
+
+        validateApiKey(apiKey);
+
+        return ApiResponses.<InventoryResponse>builder()
+                .code(1000)
+                .message("Success")
+                .data(inventoryService.getInventory(variantId))
                 .build();
     }
 }

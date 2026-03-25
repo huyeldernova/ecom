@@ -1,43 +1,47 @@
 export interface ProductVariant {
   id: string;
+  sku: string;
+  size?: string;
+  color?: string;
   variantName: string;
-  price: number;
-  discountPrice?: number;
+  finalPrice?: number;
+  effectivePrice: number;
   isActive: boolean;
-  imageUrl?: string;
+  imageUrls?: string[];
+  productName?: string;
 }
 
 export interface Product {
   id: string;
   name: string;
-  description: string;
-  category: string;
-  imageUrl: string;
+  slug: string;
+  description?: string;
+  brand: string;
+  price: number;
+  thumbnailUrl?: string;
+  imageUrls?: string[];
+  status: string;
+  categoryId: string;
   variants: ProductVariant[];
-  createdAt: string;
 }
 
 export interface ProductSummary {
   id: string;
   name: string;
-  category: string;
-  imageUrl: string;
-  minPrice: number;
-  maxPrice: number;
+  slug: string;
+  brand: string;
+  price: number;
+  thumbnailUrl?: string;
+  status: string;
+  categoryId: string;
 }
 
 export interface ProductFilterRequest {
   name?: string;
-  category?: string;
+  brand?: string;
+  categoryId?: string;
   minPrice?: number;
   maxPrice?: number;
   page?: number;
   size?: number;
-  sort?: string;
 }
-
-export type ProductSortOption =
-  | 'newest'
-  | 'price_asc'
-  | 'price_desc'
-  | 'popular';

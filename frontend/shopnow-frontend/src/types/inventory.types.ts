@@ -1,17 +1,17 @@
 export type StockStatus = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK';
-
 export type InventoryModalMode = 'restock' | 'edit' | 'add';
 
 export interface InventoryItem {
-  pid: string;          // product variant id
-  name: string;
-  sku: string;
-  category: string;
-  price: number;
+  pid: string;
+  name?: string;
+  sku?: string;
+  category?: string;
+  price?: number;
   stock: number;
   reservedQuantity: number;
-  threshold: number;    // low stock threshold
-  sold7: number;        // units sold in last 7 days
+  availableQuantity: number;
+  threshold: number;
+  sold7: number;
   status: StockStatus;
 }
 
@@ -21,8 +21,6 @@ export interface RestockRequest {
 }
 
 export interface InventoryFilterRequest {
-  name?: string;
-  category?: string;
   status?: StockStatus;
   page?: number;
   size?: number;

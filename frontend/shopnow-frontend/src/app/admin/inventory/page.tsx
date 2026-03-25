@@ -135,7 +135,7 @@ export default function InventoryPage() {
                     <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded text-mid-gray">{item.sku}</span>
                   </td>
                   <td className="px-4 py-3 text-sm text-mid-gray">{item.category}</td>
-                  <td className="px-4 py-3 font-semibold text-navy text-sm">{formatPrice(item.price)}</td>
+                  <td className="px-4 py-3 font-semibold text-navy text-sm">{item.price ? formatPrice(item.price) : '—'}</td>
                   <td className="px-4 py-3">
                     <div>
                       <span className="font-bold text-navy">{item.stock}</span>

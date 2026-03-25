@@ -16,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class VariantRequest {
 
-    @NotBlank(message = "SKU must not be blank")
     @Size(max = 100, message = "SKU must not exceed 100 characters")
     private String sku;
 

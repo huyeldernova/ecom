@@ -50,7 +50,7 @@ const WishlistDrawer = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      <div className="modal-overlay flex-1" onClick={closeWishlistDrawer} />
+      <div className="flex-1 bg-black/50" onClick={closeWishlistDrawer} />
 
       <div className="w-full max-w-sm bg-white shadow-2xl flex flex-col animate-slide-in-right">
         {/* Header */}

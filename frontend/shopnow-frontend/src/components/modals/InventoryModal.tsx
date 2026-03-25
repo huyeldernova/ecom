@@ -179,7 +179,7 @@ const InventoryModal = ({ mode, item, onClose, onSuccess }: InventoryModalProps)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div className="modal-overlay absolute inset-0" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-10 animate-scale-in">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">

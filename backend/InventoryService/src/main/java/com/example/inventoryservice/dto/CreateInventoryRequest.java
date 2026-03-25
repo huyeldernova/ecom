@@ -2,11 +2,13 @@ package com.example.inventoryservice.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.UUID;
 
 @Getter
+@Builder
 public class CreateInventoryRequest {
     @NotNull
     private UUID productVariantId;

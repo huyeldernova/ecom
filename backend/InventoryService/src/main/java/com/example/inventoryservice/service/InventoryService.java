@@ -16,7 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -199,6 +200,70 @@ public class InventoryService {
                 .build();
     }
 
+    // ─── GET ALL — list cho trang admin ───────────────────────
+    @Transactional(readOnly = true)
+    public PageResponse<InventoryListItemResponse> getAll(InventoryFilterRequest filter) {
+        Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize());
+        Page<Inventory> inventoryPage = inventoryRepository.findAll(pageable);
+
+        Instant sevenDaysAgo = Instant.now().minus(7, ChronoUnit.DAYS);
+
+        List<InventoryListItemResponse> items = inventoryPage.getContent().stream()
+                .map(inv -> {
+                    int available = inv.getAvailableQuantity();
+
+                    String status;
+                    if (available <= 0) status = "OUT_OF_STOCK";
+                    else if (available <= inv.getThreshold()) status = "LOW_STOCK";
+                    else status = "IN_STOCK";
+
+                    int sold7 = inventoryTransactionRepository
+                            .sumDeductedQuantityAfter(inv.getId(), sevenDaysAgo);
+
+                    return InventoryListItemResponse.builder()
+                            .productVariantId(inv.getProductVariantId())
+                            .stock(inv.getQuantity())
+                            .reservedQuantity(inv.getReservedQuantity())
+                            .availableQuantity(available)
+                            .threshold(inv.getThreshold())
+                            .sold7(sold7)
+                            .status(status)
+                            .build();
+                })
+
+                .filter(item -> filter.getStatus() == null || filter.getStatus().equals(item.getStatus()))
+                .toList();
+
+        return PageResponse.<InventoryListItemResponse>builder()
+                .currentPage(filter.getPage())
+                .pageSize(filter.getSize())
+                .totalPages(inventoryPage.getTotalPages())
+                .totalElements((long) items.size())
+                .result(items)
+                .build();
+    }
+
+    // ─── GET KPIs ─────────────────────────────────────────────
+    @Transactional(readOnly = true)
+    public InventoryKPIsResponse getKPIs() {
+        List<Inventory> all = inventoryRepository.findAll();
+
+        long inStock = 0, lowStock = 0, outOfStock = 0;
+        for (Inventory inv : all) {
+            int available = inv.getAvailableQuantity();
+            if (available <= 0) outOfStock++;
+            else if (available <= inv.getThreshold()) lowStock++;
+            else inStock++;
+        }
+
+        return InventoryKPIsResponse.builder()
+                .totalProducts(all.size())
+                .inStock(inStock)
+                .lowStock(lowStock)
+                .outOfStock(outOfStock)
+                .build();
+    }
+
     private InventoryTransactionResponse toTransactionResponse(InventoryTransaction transaction){
         return InventoryTransactionResponse.builder()
                 .productVariantId(transaction.getInventory().getProductVariantId())
@@ -216,6 +281,10 @@ public class InventoryService {
                 .reservedQuantity(inventory.getReservedQuantity())
                 .availableQuantity(inventory.getAvailableQuantity())
                 .build();
+    }
+
+    public boolean existsByVariantId(UUID variantId) {
+        return inventoryRepository.existsByProductVariantId(variantId);
     }
 
 

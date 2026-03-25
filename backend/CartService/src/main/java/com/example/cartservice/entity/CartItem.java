@@ -27,4 +27,14 @@ public class CartItem extends BaseEntity {
 
     @Column(name = "snapshot_price", nullable = false, precision = 19, scale = 2)
     private BigDecimal snapshotPrice;
+
+    @Column(name = "product_name")
+    private String productName;
+
+    @Column(name = "variant_name")
+    private String variantName;
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
 }

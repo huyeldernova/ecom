@@ -17,4 +17,7 @@ public class CartItemResponse implements Serializable {
     private UUID productVariantId;
     private Integer quantity;
     private BigDecimal snapshotPrice;
+    private String productName;
+    private String variantName;
+    private String imageUrl;
 }
