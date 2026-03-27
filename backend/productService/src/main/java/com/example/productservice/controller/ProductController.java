@@ -14,6 +14,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -26,8 +28,6 @@ import java.util.UUID;
 public class ProductController {
 
     private final ProductService productService;
-
-    // ==================== PRODUCT ENDPOINTS ====================
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -43,12 +43,14 @@ public class ProductController {
             @ApiResponse(responseCode = "403", description = "Access denied - ADMIN role required")
     })
     public com.example.productservice.dto.ApiResponses<ProductDetailResponse> create(
-            @RequestBody @Valid ProductRequest request) {
-
+            @RequestBody @Valid ProductRequest request,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID userId = UUID.fromString(jwt.getSubject());
         return com.example.productservice.dto.ApiResponses.<ProductDetailResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Product created successfully")
-                .data(productService.create(request))
+                .data(productService.create(request, userId))
                 .build();
     }
 

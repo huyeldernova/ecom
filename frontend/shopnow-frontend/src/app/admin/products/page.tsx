@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { Loader2, Trash2, Plus } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Loader2, Trash2, Plus, UploadCloud, X, ImageIcon } from 'lucide-react';
 import {
   productAdminService,
   CategoryPayload,
@@ -52,7 +52,7 @@ const StepBar = ({ current, data }: { current: number; data: any }) => (
           <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
             isActive ? 'bg-primary text-white' :
             isDone   ? 'bg-green-500 text-white' :
-            'bg-gray-100 text-mid-gray'
+                       'bg-gray-100 text-mid-gray'
           }`}>
             {isDone ? '✓' : idx}
           </div>
@@ -62,8 +62,8 @@ const StepBar = ({ current, data }: { current: number; data: any }) => (
             </p>
             <p className="text-[10px] text-light-gray truncate">
               {idx === 1 && data.catLabel ? data.catLabel :
-               idx === 2 && data.name ? data.name :
-               idx === 3 ? `${data.variantCount} phiên bản` : ''}
+               idx === 2 && data.name     ? data.name :
+               idx === 3                  ? `${data.variantCount} phiên bản` : ''}
             </p>
           </div>
         </div>
@@ -86,8 +86,8 @@ const CategoryBrowser = ({
   onPickSub: (id: string | null) => void;
   onCreateCat: (parentId: string | null) => void;
 }) => {
-  const roots = cats.filter(c => !c.parentId);
-  const subs = selRoot ? cats.filter(c => c.parentId === selRoot) : [];
+  const roots  = cats.filter(c => !c.parentId);
+  const subs   = selRoot ? cats.filter(c => c.parentId === selRoot) : [];
   const rootCat = cats.find(c => c.id === selRoot);
 
   return (
@@ -154,7 +154,7 @@ const CategoryBrowser = ({
                         : 'text-mid-gray hover:bg-gray-50'
                     }`}
                   >
-                    Dùng "{rootCat?.name}" trực tiếp
+                    Dùng &quot;{rootCat?.name}&quot; trực tiếp
                   </button>
                   {subs.map(c => (
                     <button
@@ -186,7 +186,6 @@ const CategoryBrowser = ({
         </div>
       </div>
 
-      {/* Selected bar */}
       {selRoot && (
         <div className="mt-3 flex items-center justify-between bg-primary/5 rounded-xl px-4 py-2.5">
           <span className="text-sm font-medium text-primary">
@@ -203,11 +202,7 @@ const CategoryBrowser = ({
 
 // ─── Create Category Modal ────────────────────────────────
 const CreateCatModal = ({
-  open,
-  parentId,
-  roots,
-  onClose,
-  onCreated,
+  open, parentId, roots, onClose, onCreated,
 }: {
   open: boolean;
   parentId: string | null;
@@ -246,7 +241,7 @@ const CreateCatModal = ({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 z-10">
         <h2 className="font-semibold text-navy mb-4">
-          {parentId ? `Tạo ngành hàng con` : 'Tạo ngành hàng gốc'}
+          {parentId ? 'Tạo ngành hàng con' : 'Tạo ngành hàng gốc'}
         </h2>
 
         <div className="space-y-3">
@@ -321,68 +316,190 @@ const CreateCatModal = ({
   );
 };
 
-// ─── Step 2: Product Info ─────────────────────────────────
+// ─── Step 2: Product Info (có upload ảnh thật lên S3) ─────
 const inputCls = 'w-full px-3 py-2.5 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors';
 
-const ProductInfoForm = ({ form, setForm }: { form: ProductPayload; setForm: any }) => (
-  <div className="space-y-4">
-    <div>
-      <label className="block text-sm font-medium text-navy mb-1.5">Tên sản phẩm *</label>
-      <input
-        value={form.name}
-        onChange={e => setForm((f: any) => ({ ...f, name: e.target.value }))}
-        placeholder="VD: Nike Air Force 1 Low White"
-        className={inputCls}
-      />
-    </div>
-    <div className="grid grid-cols-2 gap-3">
+const ProductInfoForm = ({ form, setForm }: { form: ProductPayload; setForm: any }) => {
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver]   = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // ── Upload 1 file lên S3 thông qua backend ──────────────
+  const handleUpload = async (file: File) => {
+    // Validate phía client trước khi gửi
+    if (!file.type.startsWith('image/')) {
+      toast.error('Chỉ chấp nhận file ảnh (jpg, png, webp...)');
+      return;
+    }
+    if (file.size > 314_572_800) { // 300 MB — khớp với backend max-size
+      toast.error('File quá lớn. Tối đa 300 MB');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Gọi POST /product/api/v1/files  →  multipart/form-data  key = "files"
+      const result = await productAdminService.uploadFiles([file]);
+      const s3Url  = result[0].url; // URL thật trên S3
+      setForm((f: any) => ({ ...f, thumbnailUrl: s3Url }));
+      toast.success('Upload ảnh thành công!');
+    } catch {
+      toast.error('Upload ảnh thất bại. Vui lòng thử lại.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleUpload(file);
+    // Reset input để có thể chọn lại cùng file
+    e.target.value = '';
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleUpload(file);
+  };
+
+  const clearThumbnail = () => setForm((f: any) => ({ ...f, thumbnailUrl: '' }));
+
+  return (
+    <div className="space-y-4">
+      {/* Tên sản phẩm */}
       <div>
-        <label className="block text-sm font-medium text-navy mb-1.5">Brand *</label>
+        <label className="block text-sm font-medium text-navy mb-1.5">Tên sản phẩm *</label>
         <input
-          value={form.brand}
-          onChange={e => setForm((f: any) => ({ ...f, brand: e.target.value }))}
-          placeholder="VD: Nike"
+          value={form.name}
+          onChange={e => setForm((f: any) => ({ ...f, name: e.target.value }))}
+          placeholder="VD: Nike Air Force 1 Low White"
           className={inputCls}
         />
       </div>
+
+      {/* Brand + Giá */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm font-medium text-navy mb-1.5">Brand *</label>
+          <input
+            value={form.brand}
+            onChange={e => setForm((f: any) => ({ ...f, brand: e.target.value }))}
+            placeholder="VD: Nike"
+            className={inputCls}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-navy mb-1.5">Giá gốc (USD) *</label>
+          <input
+            type="number"
+            min={0}
+            value={form.price || ''}
+            onChange={e => setForm((f: any) => ({ ...f, price: Number(e.target.value) }))}
+            placeholder="0"
+            className={inputCls}
+          />
+        </div>
+      </div>
+
+      {/* ── Thumbnail Upload ── ĐÃ FIX: upload file thật lên S3 thay vì paste URL */}
       <div>
-        <label className="block text-sm font-medium text-navy mb-1.5">Giá gốc (USD) *</label>
-        <input
-          type="number"
-          min={0}
-          value={form.price || ''}
-          onChange={e => setForm((f: any) => ({ ...f, price: Number(e.target.value) }))}
-          placeholder="0"
-          className={inputCls}
+        <label className="block text-sm font-medium text-navy mb-1.5">
+          Ảnh thumbnail <span className="font-normal text-light-gray text-xs">— tùy chọn</span>
+        </label>
+
+        {/* Trường hợp đã có URL (đã upload xong) */}
+        {form.thumbnailUrl ? (
+          <div className="relative inline-block">
+            <img
+              src={form.thumbnailUrl}
+              alt="Thumbnail preview"
+              className="h-32 w-32 object-cover rounded-xl border border-border"
+            />
+            {/* Nút xóa để upload lại */}
+            <button
+              onClick={clearThumbnail}
+              className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-sm"
+              title="Xóa ảnh, upload lại"
+            >
+              <X className="w-3 h-3" />
+            </button>
+            <p className="text-xs text-green-600 mt-1.5 flex items-center gap-1">
+              ✓ Đã upload lên S3
+            </p>
+          </div>
+        ) : (
+          /* Drag & Drop / Click to upload zone */
+          <div
+            onClick={() => !uploading && inputRef.current?.click()}
+            onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={onDrop}
+            className={`
+              flex flex-col items-center justify-center gap-2
+              w-full h-36 border-2 border-dashed rounded-xl cursor-pointer
+              transition-colors
+              ${uploading
+                ? 'border-primary/40 bg-primary/5 cursor-not-allowed'
+                : dragOver
+                  ? 'border-primary bg-primary/10'
+                  : 'border-border hover:border-primary/50 hover:bg-gray-50'
+              }
+            `}
+          >
+            {uploading ? (
+              <>
+                <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                <span className="text-sm text-primary font-medium">Đang upload lên S3...</span>
+              </>
+            ) : (
+              <>
+                {dragOver
+                  ? <UploadCloud className="w-7 h-7 text-primary" />
+                  : <ImageIcon className="w-7 h-7 text-light-gray" />
+                }
+                <div className="text-center">
+                  <span className="text-sm text-mid-gray">
+                    Kéo thả ảnh vào đây, hoặc{' '}
+                    <span className="text-primary font-medium underline underline-offset-2">
+                      chọn file
+                    </span>
+                  </span>
+                  <p className="text-xs text-light-gray mt-0.5">JPG, PNG, WEBP — tối đa 300 MB</p>
+                </div>
+              </>
+            )}
+
+            {/* Input file ẩn — trigger bằng click vào zone hoặc ref */}
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={onFileChange}
+              disabled={uploading}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Mô tả */}
+      <div>
+        <label className="block text-sm font-medium text-navy mb-1.5">
+          Mô tả <span className="font-normal text-light-gray text-xs">— tùy chọn</span>
+        </label>
+        <textarea
+          value={form.description}
+          onChange={e => setForm((f: any) => ({ ...f, description: e.target.value }))}
+          placeholder="Mô tả ngắn về sản phẩm..."
+          rows={3}
+          className={inputCls + ' resize-none'}
         />
       </div>
     </div>
-    <div>
-      <label className="block text-sm font-medium text-navy mb-1.5">
-        Ảnh thumbnail <span className="font-normal text-light-gray text-xs">— tùy chọn</span>
-      </label>
-      <input
-        value={form.thumbnailUrl}
-        onChange={e => setForm((f: any) => ({ ...f, thumbnailUrl: e.target.value }))}
-        placeholder="Dán link ảnh, VD: https://..."
-        className={inputCls}
-      />
-      <p className="text-xs text-light-gray mt-1">Dán URL ảnh từ internet. Để trống nếu chưa có.</p>
-    </div>
-    <div>
-      <label className="block text-sm font-medium text-navy mb-1.5">
-        Mô tả <span className="font-normal text-light-gray text-xs">— tùy chọn</span>
-      </label>
-      <textarea
-        value={form.description}
-        onChange={e => setForm((f: any) => ({ ...f, description: e.target.value }))}
-        placeholder="Mô tả ngắn về sản phẩm..."
-        rows={3}
-        className={inputCls + ' resize-none'}
-      />
-    </div>
-  </div>
-);
+  );
+};
 
 // ─── Step 3: Variants ─────────────────────────────────────
 const VariantsForm = ({
@@ -392,11 +509,10 @@ const VariantsForm = ({
   variants: VariantPayload[];
   setVariants: (v: VariantPayload[]) => void;
 }) => {
-  const add = () => setVariants([...variants, { sku: '', size: '', color: '', finalPrice: 0 }]);
+  const add    = () => setVariants([...variants, { sku: '', size: '', color: '', finalPrice: 0 }]);
   const remove = (i: number) => setVariants(variants.filter((_, idx) => idx !== i));
-  const update = (i: number, field: keyof VariantPayload, val: any) => {
+  const update = (i: number, field: keyof VariantPayload, val: any) =>
     setVariants(variants.map((v, idx) => idx === i ? { ...v, [field]: val } : v));
-  };
 
   return (
     <div>
@@ -416,9 +532,9 @@ const VariantsForm = ({
         {variants.map((v, i) => (
           <div key={i} className="grid grid-cols-[1fr_1fr_1fr_90px_32px] gap-2 items-center bg-gray-50 rounded-xl px-2 py-2">
             {[
-              { field: 'size' as const, placeholder: 'M, XL, 42...' },
+              { field: 'size'  as const, placeholder: 'M, XL, 42...' },
               { field: 'color' as const, placeholder: 'Đen, Trắng...' },
-              { field: 'sku' as const, placeholder: 'Tự tạo' },
+              { field: 'sku'   as const, placeholder: 'Tự tạo' },
             ].map(({ field, placeholder }) => (
               <input
                 key={field}
@@ -436,7 +552,10 @@ const VariantsForm = ({
               placeholder="0"
               className="w-full px-2 py-1.5 border border-border rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary"
             />
-            <button onClick={() => remove(i)} className="flex items-center justify-center text-light-gray hover:text-red-500 transition-colors">
+            <button
+              onClick={() => remove(i)}
+              className="flex items-center justify-center text-light-gray hover:text-red-500 transition-colors"
+            >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -472,7 +591,9 @@ const ReviewPanel = ({
           ['Tên sản phẩm', product.name],
           ['Brand', product.brand],
           ['Giá gốc', `$${product.price}`],
-          ...(product.description ? [['Mô tả', product.description.slice(0, 60) + (product.description.length > 60 ? '...' : '')]] : []),
+          ...(product.description
+            ? [['Mô tả', product.description.slice(0, 60) + (product.description.length > 60 ? '...' : '')]]
+            : []),
         ],
       },
     ].map(({ title, rows }) => (
@@ -488,6 +609,18 @@ const ReviewPanel = ({
         </div>
       </div>
     ))}
+
+    {/* Preview thumbnail nếu đã upload */}
+    {product.thumbnailUrl && (
+      <div className="bg-gray-50 rounded-xl p-4">
+        <p className="text-[11px] font-semibold text-light-gray uppercase tracking-wide mb-3">Ảnh thumbnail</p>
+        <img
+          src={product.thumbnailUrl}
+          alt="Thumbnail"
+          className="h-24 w-24 object-cover rounded-xl border border-border"
+        />
+      </div>
+    )}
 
     <div className="bg-gray-50 rounded-xl p-4">
       <p className="text-[11px] font-semibold text-light-gray uppercase tracking-wide mb-3">
@@ -510,18 +643,18 @@ const ReviewPanel = ({
 
 // ─── Main Page ────────────────────────────────────────────
 export default function AdminProductsPage() {
-  const [step, setStep] = useState(1);
-  const [cats, setCats] = useState<Category[]>([]);
+  const [step, setStep]     = useState(1);
+  const [cats, setCats]     = useState<Category[]>([]);
   const [selRoot, setSelRoot] = useState<string | null>(null);
-  const [selSub, setSelSub] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [selSub, setSelSub]   = useState<string | null>(null);
+  const [modalOpen, setModalOpen]       = useState(false);
   const [modalParentId, setModalParentId] = useState<string | null>(null);
   const [product, setProduct] = useState<ProductPayload>({
     name: '', brand: '', price: 0, categoryId: '',
     description: '', thumbnailUrl: '', variants: [],
   });
   const [variants, setVariants] = useState<VariantPayload[]>([]);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving]     = useState(false);
 
   const loadCats = useCallback(async () => {
     try {
@@ -536,18 +669,18 @@ export default function AdminProductsPage() {
 
   const catLabel = (() => {
     const root = cats.find(c => c.id === selRoot);
-    const sub = selSub ? cats.find(c => c.id === selSub) : null;
+    const sub  = selSub ? cats.find(c => c.id === selSub) : null;
     return root ? [root.name, sub?.name].filter(Boolean).join(' > ') : '';
   })();
 
   const categoryId = selSub ?? selRoot ?? '';
 
   const validate = () => {
-    if (step === 1 && !selRoot) { toast.error('Vui lòng chọn ngành hàng'); return false; }
+    if (step === 1 && !selRoot)         { toast.error('Vui lòng chọn ngành hàng');    return false; }
     if (step === 2) {
-      if (!product.name.trim()) { toast.error('Vui lòng nhập tên sản phẩm'); return false; }
-      if (!product.brand.trim()) { toast.error('Vui lòng nhập brand'); return false; }
-      if (!product.price) { toast.error('Vui lòng nhập giá'); return false; }
+      if (!product.name.trim())         { toast.error('Vui lòng nhập tên sản phẩm'); return false; }
+      if (!product.brand.trim())        { toast.error('Vui lòng nhập brand');         return false; }
+      if (!product.price)               { toast.error('Vui lòng nhập giá');           return false; }
     }
     if (step === 3 && variants.length === 0) { toast.error('Thêm ít nhất 1 phiên bản'); return false; }
     return true;
@@ -557,7 +690,8 @@ export default function AdminProductsPage() {
     if (!validate()) return;
     if (step < 4) { setStep(s => s + 1); return; }
 
-    // Save
+    // ── Bước 4: Lưu sản phẩm ────────────────────────────
+    // thumbnailUrl lúc này đã là URL S3 thật (hoặc rỗng nếu không upload)
     setSaving(true);
     try {
       await productAdminService.createProduct({
@@ -566,7 +700,7 @@ export default function AdminProductsPage() {
         variants,
       });
       toast.success(`Tạo sản phẩm "${product.name}" thành công`);
-      // Reset
+      // Reset toàn bộ form
       setStep(1);
       setSelRoot(null); setSelSub(null);
       setProduct({ name: '', brand: '', price: 0, categoryId: '', description: '', thumbnailUrl: '', variants: [] });
@@ -586,7 +720,7 @@ export default function AdminProductsPage() {
   const handleCatCreated = (cat: Category) => {
     setCats(prev => [...prev, cat]);
     if (cat.parentId) { setSelRoot(cat.parentId); setSelSub(cat.id); }
-    else { setSelRoot(cat.id); setSelSub(null); }
+    else              { setSelRoot(cat.id);        setSelSub(null);   }
   };
 
   return (
@@ -598,11 +732,7 @@ export default function AdminProductsPage() {
 
       <StepBar
         current={step}
-        data={{
-          catLabel,
-          name: product.name,
-          variantCount: variants.length,
-        }}
+        data={{ catLabel, name: product.name, variantCount: variants.length }}
       />
 
       <div className="bg-white rounded-2xl border border-border p-6">
