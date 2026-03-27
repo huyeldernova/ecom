@@ -36,6 +36,8 @@ public class ProductRequest {
     @Size(max = 2000, message = "Description must not exceed 2000 characters")
     private String description;
 
+    private List<UUID> fileIds;
+
     private String thumbnailUrl;
 
     private List<String> imageUrls;

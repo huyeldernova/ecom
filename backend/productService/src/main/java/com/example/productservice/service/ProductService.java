@@ -1,7 +1,9 @@
 package com.example.productservice.service;
 
 import com.example.event.VariantCreatedEvent;
+import com.example.productservice.client.FileServiceClient;
 import com.example.productservice.dto.*;
+import com.example.productservice.dto.client.LinkFilesRequest;
 import com.example.productservice.entity.Category;
 import com.example.productservice.entity.Product;
 import com.example.productservice.entity.ProductVariant;
@@ -38,18 +40,20 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final FileServiceClient fileServiceClient;
     private final KafkaTemplate<String, VariantCreatedEvent> kafkaTemplate;
 
     @Transactional
-    public ProductDetailResponse create (ProductRequest request){
+    public ProductDetailResponse create(ProductRequest request, UUID userId) {
 
-      Category category = categoryRepository.findById(request.getCategoryId())
-              .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
         String generate = Slug.generate(request.getBrand() + " " + request.getName());
-        if(productRepository.existsBySlug(generate)){
+        if (productRepository.existsBySlug(generate)) {
             throw new AppException(ErrorCode.PRODUCT_ALREADY_EXISTS);
         }
+
         Product product = Product.builder()
                 .name(request.getName())
                 .slug(generate)
@@ -57,18 +61,20 @@ public class ProductService {
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .thumbnailUrl(request.getThumbnailUrl())
-                .imageUrls(request.getImageUrls() != null ? request.getImageUrls() : new ArrayList<>())
+                .imageUrls(request.getImageUrls() != null
+                        ? request.getImageUrls() : new ArrayList<>())
                 .category(category)
                 .variants(new ArrayList<>())
                 .build();
 
-        if(request.getVariants() != null && !request.getVariants().isEmpty()){
-            for(VariantRequest variantRequest : request.getVariants()){
-                if(productVariantRepository.existsBySku(variantRequest.getSku())){
+        if (request.getVariants() != null && !request.getVariants().isEmpty()) {
+            for (VariantRequest variantRequest : request.getVariants()) {
+                if (productVariantRepository.existsBySku(variantRequest.getSku())) {
                     throw new AppException(ErrorCode.SKU_ALREADY_EXISTS);
                 }
 
-                String sku = (variantRequest.getSku() != null && !variantRequest.getSku().isBlank())
+                String sku = (variantRequest.getSku() != null
+                        && !variantRequest.getSku().isBlank())
                         ? variantRequest.getSku()
                         : generateSku(request.getBrand(), request.getName(),
                         variantRequest.getColor(), variantRequest.getSize());
@@ -84,16 +90,41 @@ public class ProductService {
                 product.addVariant(variant);
             }
         }
-        productRepository.save(product);
 
-        for (ProductVariant v : product.getVariants()) {
-            kafkaTemplate.send("variant.created",
-                    VariantCreatedEvent.builder()
-                            .variantId(v.getId())
-                            .productId(product.getId())
-                            .sku(v.getSku())
-                            .build()
-            );
+        try {
+            productRepository.save(product);
+
+            if (request.getFileIds() != null && !request.getFileIds().isEmpty()) {
+                fileServiceClient.linkFiles(
+                        LinkFilesRequest.builder()
+                                .fileIds(request.getFileIds())
+                                .targetId(product.getId())
+                                .targetType("PRODUCT")
+                                .requesterId(userId)
+                                .build()
+                );
+            }
+
+            for (ProductVariant v : product.getVariants()) {
+                kafkaTemplate.send("variant.created",
+                        VariantCreatedEvent.builder()
+                                .variantId(v.getId())
+                                .productId(product.getId())
+                                .sku(v.getSku())
+                                .build()
+                );
+            }
+
+        } catch (Exception e) {
+            // Compensation: xóa files đã upload nếu có lỗi
+            if (request.getFileIds() != null && !request.getFileIds().isEmpty()) {
+                try {
+                    fileServiceClient.deleteByIds(request.getFileIds());
+                } catch (Exception deleteEx) {
+                    // Cleanup job sẽ dọn sau — không throw để tránh mask exception gốc
+                }
+            }
+            throw e;
         }
 
         return toDetailResponse(product);
@@ -353,6 +384,7 @@ public class ProductService {
                 .isActive(variant.getIsActive())
                 .finalPrice(variant.getFinalPrice())
                 .imageUrls(variant.getImageUrls())
+                .categoryName(variant.getProduct().getCategory().getName())
                 .build();
     }
 

@@ -10,7 +10,16 @@
         <module name="ApiGatewayService" />
         <module name="productService" />
       </profile>
-      <profile name="Annotation profile for InventoryService" enabled="true">
+      <profile name="Annotation profile for FileService" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
+        </processorPath>
+        <module name="FileService" />
+      </profile>
+      <profile name="Annotation profile for ProfileService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -31,6 +40,7 @@
       <module name="ApiGatewayService" options="-parameters" />
       <module name="AuthenticationService" options="-parameters" />
       <module name="CartService" options="-parameters" />
+      <module name="FileService" options="-parameters" />
       <module name="InventoryService" options="-parameters" />
       <module name="OrderService" options="-parameters" />
       <module name="PaymentService" options="-parameters" />

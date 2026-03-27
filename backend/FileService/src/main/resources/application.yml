@@ -1,0 +1,29 @@
+server:
+  port: 8087
+  servlet:
+    context-path: /file
+
+spring:
+  application:
+    name: file-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecommerce_file
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+aws:
+  s3:
+    region: us-east-1
+    access-key: AKIARUVMU5YWKZGCQENU
+    secret-key: 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
+    max-size: 314572800
+    bucket-name: "huy-ecommerce-bucket"
+
+jwt:
+  secret-key: "298d452efb93a5b2eb1005d0bec28a1cc90d4b51ab055e32499119fbe606a61e9f9a8f0f"

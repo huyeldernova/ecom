@@ -37,4 +37,6 @@ public class VariantResponse {
 
     private Boolean isActive;
 
+    private String categoryName;
+
 }

@@ -29,6 +29,7 @@ export const inventoryService = {
             name: variant.productName ?? '—',
             sku: variant.sku ?? '—',
             price: variant.effectivePrice ?? variant.finalPrice ?? 0,
+            category: variant.categoryName ?? '—',
           };
         } catch {
           return {

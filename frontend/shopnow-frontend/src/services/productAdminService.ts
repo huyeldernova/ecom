@@ -5,7 +5,7 @@ export interface CategoryPayload {
   name: string;
   description?: string;
   displayOrder?: number;
-  parentId?: string
+  parentId?: string;
 }
 
 export interface VariantPayload {
@@ -25,6 +25,15 @@ export interface ProductPayload {
   variants: VariantPayload[];
 }
 
+// ─── Response type trả về từ backend /api/v1/files ───────
+export interface FileMetaDataResponse {
+  name: string;
+  contentType: string;
+  size: number;
+  url: string;
+  displayOrder: number;
+}
+
 export const productAdminService = {
   // ─── Categories ──────────────────────────────────────────
   getCategories: async () => {
@@ -34,6 +43,23 @@ export const productAdminService = {
 
   createCategory: async (payload: CategoryPayload) => {
     const res = await productApi.post<ApiResponse<any>>('/api/v1/categories', payload);
+    return res.data.data;
+  },
+
+  // ─── Upload files lên S3 ─────────────────────────────────
+  // Gọi POST /product/api/v1/files với multipart/form-data
+  // Backend nhận @RequestParam List<MultipartFile> files
+  uploadFiles: async (files: File[]): Promise<FileMetaDataResponse[]> => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+
+    const res = await productApi.post<ApiResponse<FileMetaDataResponse[]>>(
+      '/api/v1/files',
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
+    );
     return res.data.data;
   },
 
