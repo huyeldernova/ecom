@@ -1,13 +1,13 @@
 package com.example.fileservice.config;
 
 import com.example.fileservice.exception.ErrorCode;
+import com.example.fileservice.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.web.ErrorResponse;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;

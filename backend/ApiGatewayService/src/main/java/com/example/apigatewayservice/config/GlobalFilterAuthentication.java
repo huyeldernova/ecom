@@ -3,52 +3,71 @@ package com.example.apigatewayservice.config;
 import com.example.apigatewayservice.client.AuthenticationClient;
 import com.example.apigatewayservice.dto.IntroSpectRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalFilterAuthentication implements GlobalFilter, Ordered {
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/authentication/api/v1/auth/.*"
+            "/authentication/api/v1/auth/**",
+            "/authentication/api/v1/users/register",
+            "/authentication/api/v1/auth/login",
+            "/payment/api/payment/webhook",// Stripe webhook không có JWT
+            "/chat-service/ws/**"
     };
 
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final AuthenticationClient authenticationClient;
 
     @Override
-    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
-        if(isPublicEndpoint(exchange)){
+        if (isPublicEndpoint(exchange)) {
             return chain.filter(exchange);
         }
 
-        List<String> authHeader = exchange.getRequest().getHeaders().get("Authorization");
+        String bearerToken = exchange.getRequest()
+                .getHeaders()
+                .getFirst(HttpHeaders.AUTHORIZATION);
 
-        if(authHeader == null || authHeader.isEmpty()){
-            return Mono.error(new RuntimeException("Missing Authorization header"));
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+            return unauthorizedResponse(exchange);
         }
 
-            String token =  authHeader.getFirst().replace("Bearer ", "");
-            IntroSpectRequest request = IntroSpectRequest.builder()
-                    .token(token)
-                    .build();
+        String token = bearerToken.substring(7);
 
-            return authenticationClient.introspect(request).flatMap(introSpectResponse -> {
-                if(introSpectResponse.getResult().isValid()){
-                    return chain.filter(exchange);
-                }else{
+        return authenticationClient
+                .introspect(IntroSpectRequest.builder().token(token).build())
+                .flatMap(resp -> {
+                    log.info("Introspect result: {}", resp.getResult());
+                    if (resp.getResult().isValid()) {
+                        log.info("Token valid for path: {}",
+                                exchange.getRequest().getURI().getPath());
+                        return chain.filter(exchange);
+                    }
                     return unauthorizedResponse(exchange);
-                }
-            });
+                })
+                .onErrorResume(throwable -> {
+                    log.error("Auth service error: {}", throwable.getMessage());
+                    return unauthorizedResponse(exchange);
+                });
     }
 
     @Override
@@ -56,13 +75,19 @@ public class GlobalFilterAuthentication implements GlobalFilter, Ordered {
         return -1;
     }
 
-    private Mono<Void> unauthorizedResponse(ServerWebExchange exchange) {
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        return exchange.getResponse().setComplete();
+    private boolean isPublicEndpoint(ServerWebExchange exchange) {
+        String path = exchange.getRequest().getURI().getPath();
+        return Arrays.stream(PUBLIC_ENDPOINTS)
+                .anyMatch(p -> pathMatcher.match(p, path));
     }
 
-    private boolean isPublicEndpoint(ServerWebExchange exchange){
-        return Arrays.stream(PUBLIC_ENDPOINTS)
-                .anyMatch(p -> exchange.getRequest().getURI().getPath().matches(p));
+    private Mono<Void> unauthorizedResponse(ServerWebExchange exchange) {
+        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        exchange.getResponse().getHeaders()
+                .setContentType(MediaType.APPLICATION_JSON);
+        String json = "{\"code\": 401, \"message\": \"Unauthorized\"}";
+        DataBuffer buffer = exchange.getResponse().bufferFactory()
+                .wrap(json.getBytes(StandardCharsets.UTF_8));
+        return exchange.getResponse().writeWith(Mono.just(buffer));
     }
 }

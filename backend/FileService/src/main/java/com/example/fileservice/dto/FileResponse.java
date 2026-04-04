@@ -1,6 +1,5 @@
 package com.example.fileservice.dto;
 
-import com.example.fileservice.entity.Status;
 import com.example.fileservice.entity.TargetType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -17,6 +16,8 @@ import java.util.UUID;
 public class FileResponse {
     private UUID id;
     private TargetType targetType;
+    private String thumbnailUrl;
+    private String mediaType;
     private UUID targetId;
     private String name;
     private String url;

@@ -95,6 +95,7 @@ public class AuthService {
                     .build();
         }catch (Exception e){
 
+            log.error("Token verification failed: {}", e.getMessage());
             return IntroSpectResponse.builder()
                     .isValid(false)
                     .authorities(List.of())
