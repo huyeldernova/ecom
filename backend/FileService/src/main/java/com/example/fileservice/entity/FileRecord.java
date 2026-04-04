@@ -26,19 +26,29 @@ public class FileRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     private String name;
     private String url;
+
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;        // ✅ THÊM
+
     private String contentType;
     private Long size;
 
     @Enumerated(EnumType.STRING)
     private TargetType targetType;
+
     private UUID targetId;
     private UUID uploadedBy;
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "media_type")
+    private MediaType mediaType;
 
     @PrePersist
     protected void onCreate() {

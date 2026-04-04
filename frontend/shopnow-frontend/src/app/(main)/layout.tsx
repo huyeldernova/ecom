@@ -4,6 +4,7 @@ import AuthModal from '@/components/modals/AuthModal';
 import CartDrawer from '@/components/modals/CartDrawer';
 import SearchModal from '@/components/modals/SearchModal';
 import WishlistDrawer from '@/components/modals/WishlistDrawer';
+import ChatProvider from '@/components/chat/ChatProvider';
 
 export default function MainLayout({
   children,
@@ -16,11 +17,12 @@ export default function MainLayout({
       <main className="flex-1">{children}</main>
       <Footer />
 
-      {/* Global Modals */}
       <AuthModal />
       <CartDrawer />
       <SearchModal />
       <WishlistDrawer />
+
+      <ChatProvider />
     </div>
   );
 }

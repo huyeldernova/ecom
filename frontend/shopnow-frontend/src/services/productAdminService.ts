@@ -1,4 +1,5 @@
-import { productApi } from './api';
+// frontend/shopnow-frontend/src/services/productAdminService.ts
+import { productApi, fileApi } from './api';  // ← thêm fileApi
 import { ApiResponse } from '@/types/common.types';
 
 export interface CategoryPayload {
@@ -22,16 +23,21 @@ export interface ProductPayload {
   categoryId: string;
   description?: string;
   thumbnailUrl?: string;
+  fileIds?: string[];      // ← THÊM: để gửi lên productService link với FileService
   variants: VariantPayload[];
 }
 
-// ─── Response type trả về từ backend /api/v1/files ───────
-export interface FileMetaDataResponse {
+// ─── Cập nhật interface khớp với FileResponse mới ────────
+export interface FileResponse {
+  id: string;              // UUID — cần để link sau khi tạo product
   name: string;
   contentType: string;
   size: number;
   url: string;
-  displayOrder: number;
+  targetType: string | null;
+  targetId: string | null;
+  createdAt: string;
+  // displayOrder đã bị xóa — field này chỉ có ở productService cũ
 }
 
 export const productAdminService = {
@@ -46,19 +52,15 @@ export const productAdminService = {
     return res.data.data;
   },
 
-  // ─── Upload files lên S3 ─────────────────────────────────
-  // Gọi POST /product/api/v1/files với multipart/form-data
-  // Backend nhận @RequestParam List<MultipartFile> files
-  uploadFiles: async (files: File[]): Promise<FileMetaDataResponse[]> => {
+  // ─── Upload files lên FileService (port 8087) ────────────
+  uploadFiles: async (files: File[]): Promise<FileResponse[]> => {
     const formData = new FormData();
     files.forEach((file) => formData.append('files', file));
 
-    const res = await productApi.post<ApiResponse<FileMetaDataResponse[]>>(
+    const res = await fileApi.post<ApiResponse<FileResponse[]>>(   // ← fileApi thay vì productApi
       '/api/v1/files',
       formData,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      }
+      { headers: { 'Content-Type': 'multipart/form-data' } }
     );
     return res.data.data;
   },

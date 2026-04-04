@@ -1,6 +1,5 @@
 'use client';
 
-
 import Link from 'next/link';
 import {
   Search, ShoppingCart, Heart, User, Menu, X,
@@ -10,7 +9,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import { cn } from '@/lib/utils';
-import { MOCK_CATEGORIES } from '@/lib/mockData/products.mock';
+import { MOCK_CATEGORIES, MOCK_PRODUCTS } from '@/lib/mockData/products.mock';
 import { useState, useEffect, useRef } from 'react';
 import { cartService } from '@/services/cartService';
 
@@ -25,17 +24,14 @@ const PromoBar = () => (
 // ─── Dark Mode Toggle ─────────────────────────────────────
 const DarkModeToggle = () => {
   const [dark, setDark] = useState(false);
-
-  const toggle = () => {
-    setDark((prev) => {
-      document.documentElement.classList.toggle('dark', !prev);
-      return !prev;
-    });
-  };
-
   return (
     <button
-      onClick={toggle}
+      onClick={() => {
+        setDark((prev) => {
+          document.documentElement.classList.toggle('dark', !prev);
+          return !prev;
+        });
+      }}
       className="p-2 rounded-lg text-mid-gray hover:text-navy hover:bg-gray-100 transition-colors"
       aria-label="Toggle dark mode"
     >
@@ -50,12 +46,11 @@ const SearchBar = () => {
   const [open, setOpen] = useState(false);
   const [results, setResults] = useState<typeof MOCK_PRODUCTS>([]);
   const ref = useRef<HTMLDivElement>(null);
+  const TRENDING = ['Sony headphones', 'Nike shoes', 'iPad Pro', 'Dyson vacuum', 'Atomic Habits'];
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -73,11 +68,8 @@ const SearchBar = () => {
     );
   };
 
-  const TRENDING = ['Sony headphones', 'Nike shoes', 'iPad Pro', 'Dyson vacuum', 'Atomic Habits'];
-
   return (
     <div ref={ref} className="relative flex-1 max-w-xl">
-      {/* Input */}
       <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background hover:border-primary/40 hover:bg-white transition-colors">
         <Search className="w-4 h-4 text-light-gray shrink-0" />
         <input
@@ -89,32 +81,27 @@ const SearchBar = () => {
           className="flex-1 text-sm text-navy bg-transparent placeholder:text-light-gray focus:outline-none"
         />
         {query && (
-                  <button onClick={() => { setQuery(''); setResults([]); }}>
-                    <X className="w-4 h-4 text-light-gray hover:text-navy" />
-                  </button>
-                )}
-              </div>
+          <button onClick={() => { setQuery(''); setResults([]); }}>
+            <X className="w-4 h-4 text-light-gray hover:text-navy" />
+          </button>
+        )}
+      </div>
+      <button
+        onClick={() => {
+          if (query.trim()) {
+            setOpen(false);
+            window.location.href = `/products?name=${encodeURIComponent(query.trim())}`;
+          }
+        }}
+        className="absolute right-0 top-0 bottom-0 px-4 bg-primary hover:bg-primary-dark
+                   text-white text-sm font-semibold rounded-xl transition-colors"
+      >
+        <Search className="w-4 h-4" />
+      </button>
 
-              {/* Search button */}
-              <button
-                onClick={() => {
-                  if (query.trim()) {
-                    setOpen(false);
-                    window.location.href = `/products?name=${encodeURIComponent(query.trim())}`;
-                  }
-                }}
-                className="absolute right-0 top-0 bottom-0 px-4 bg-primary hover:bg-primary-dark
-                           text-white text-sm font-semibold rounded-xl transition-colors"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-
-      {/* Dropdown */}
       {open && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
           <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
-
-            {/* Results */}
             {results.length > 0 && (
               <div>
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Sản phẩm</p>
@@ -139,13 +126,9 @@ const SearchBar = () => {
                 })}
               </div>
             )}
-
-            {/* No results */}
             {query && results.length === 0 && (
               <p className="text-sm text-center text-gray-400 py-4">Không tìm thấy "{query}"</p>
             )}
-
-            {/* Empty state */}
             {!query && (
               <div className="space-y-3">
                 <div>
@@ -186,10 +169,7 @@ const CartButton = () => {
 
   useEffect(() => {
     setItemCount(useCartStore.getState().itemCount());
-    const unsub = useCartStore.subscribe((s) => {
-      setItemCount(s.itemCount());
-    });
-    return unsub;
+    return useCartStore.subscribe((s) => setItemCount(s.itemCount()));
   }, []);
 
   return (
@@ -213,13 +193,10 @@ const CartButton = () => {
 // ─── Wishlist Button ──────────────────────────────────────
 const WishlistButton = () => {
   const { openWishlistDrawer } = useUIStore();
-
   return (
-    <button
-      onClick={openWishlistDrawer}
+    <button onClick={openWishlistDrawer}
       className="p-2 rounded-lg text-mid-gray hover:text-navy hover:bg-gray-100 transition-colors"
-      aria-label="Wishlist"
-    >
+      aria-label="Wishlist">
       <Heart className="w-5 h-5" />
     </button>
   );
@@ -228,20 +205,29 @@ const WishlistButton = () => {
 // ─── User Menu ────────────────────────────────────────────
 const UserMenu = () => {
   const { openAuthModal } = useUIStore();
-  const { isAuthenticated, user, logout } = useAuthStore();
+
+  // ✅ Dùng _hasHydrated từ store thay vì local mounted state
+  // _hasHydrated = true sau khi Zustand đọc xong localStorage
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const _hasHydrated = useAuthStore((s) => s._hasHydrated);
+
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  // ✅ Chưa đọc xong localStorage → hiện skeleton tránh flash
+  if (!_hasHydrated) {
+    return <div className="w-24 h-9 bg-gray-100 rounded-lg animate-pulse" />;
+  }
 
   if (!isAuthenticated) {
     return (
@@ -265,7 +251,7 @@ const UserMenu = () => {
       >
         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
           <span className="text-primary text-sm font-bold">
-            {user?.firstName?.[0] ?? 'U'}
+            {user?.firstName?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase() ?? 'U'}
           </span>
         </div>
         <ChevronDown className={cn('w-4 h-4 text-mid-gray transition-transform', open && 'rotate-180')} />
@@ -276,36 +262,24 @@ const UserMenu = () => {
                         border border-border shadow-lg py-1 z-50 animate-scale-in">
           <div className="px-4 py-3 border-b border-border">
             <p className="font-semibold text-navy text-sm">
-              {user?.firstName} {user?.lastName}
+              {user?.firstName ? `${user.firstName} ${user.lastName}` : user?.email}
             </p>
             <p className="text-xs text-light-gray truncate">{user?.email}</p>
           </div>
-
-          <Link
-            href="/profile"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-3 px-4 py-2.5 text-sm text-mid-gray hover:bg-gray-50 hover:text-navy transition-colors"
-          >
+          <Link href="/profile" onClick={() => setOpen(false)}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-mid-gray hover:bg-gray-50 hover:text-navy transition-colors">
             <User className="w-4 h-4" /> Tài khoản của tôi
           </Link>
-          <Link
-            href="/orders"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-3 px-4 py-2.5 text-sm text-mid-gray hover:bg-gray-50 hover:text-navy transition-colors"
-          >
+          <Link href="/orders" onClick={() => setOpen(false)}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-mid-gray hover:bg-gray-50 hover:text-navy transition-colors">
             <Package className="w-4 h-4" /> Đơn hàng
           </Link>
-
           {user?.role === 'ADMIN' && (
-            <Link
-              href="/admin/inventory"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-mid-gray hover:bg-gray-50 hover:text-navy transition-colors"
-            >
+            <Link href="/admin/inventory" onClick={() => setOpen(false)}
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-mid-gray hover:bg-gray-50 hover:text-navy transition-colors">
               <Bell className="w-4 h-4" /> Quản lý kho
             </Link>
           )}
-
           <div className="border-t border-border mt-1">
             <button
               onClick={() => { logout(); setOpen(false); }}
@@ -326,21 +300,17 @@ const CategoryNav = () => (
     <div className="max-w-7xl mx-auto px-4">
       <ul className="flex items-center gap-1 overflow-x-auto scrollbar-none py-1">
         <li>
-          <Link
-            href="/products"
+          <Link href="/products"
             className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-mid-gray
-                       hover:text-primary hover:bg-primary/5 rounded-lg transition-colors whitespace-nowrap"
-          >
+                       hover:text-primary hover:bg-primary/5 rounded-lg transition-colors whitespace-nowrap">
             Tất cả
           </Link>
         </li>
         {MOCK_CATEGORIES.map((cat) => (
           <li key={cat.id}>
-            <Link
-              href={`/products?category=${cat.label}`}
+            <Link href={`/products?category=${cat.label}`}
               className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-mid-gray
-                         hover:text-primary hover:bg-primary/5 rounded-lg transition-colors whitespace-nowrap"
-            >
+                         hover:text-primary hover:bg-primary/5 rounded-lg transition-colors whitespace-nowrap">
               <span>{cat.emoji}</span>
               {cat.label}
             </Link>
@@ -354,7 +324,9 @@ const CategoryNav = () => (
 // ─── Mobile Menu ──────────────────────────────────────────
 const MobileMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { openAuthModal } = useUIStore();
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
 
   if (!open) return null;
 
@@ -368,37 +340,27 @@ const MobileMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) =
             <X className="w-5 h-5" />
           </button>
         </div>
-
         <div className="flex-1 overflow-y-auto py-4 px-4 space-y-1">
           {MOCK_CATEGORIES.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/products?category=${cat.label}`}
-              onClick={onClose}
-              className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 text-mid-gray hover:text-navy transition-colors"
-            >
+            <Link key={cat.id} href={`/products?category=${cat.label}`} onClick={onClose}
+              className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 text-mid-gray hover:text-navy transition-colors">
               <span className="text-xl">{cat.emoji}</span>
               <span className="font-medium">{cat.label}</span>
             </Link>
           ))}
         </div>
-
         <div className="border-t border-border p-4">
           {isAuthenticated ? (
             <div className="space-y-2">
               <p className="font-semibold text-navy">{user?.firstName} {user?.lastName}</p>
-              <button
-                onClick={() => { logout(); onClose(); }}
-                className="flex items-center gap-2 text-sm text-red-500"
-              >
+              <button onClick={() => { logout(); onClose(); }}
+                className="flex items-center gap-2 text-sm text-red-500">
                 <LogOut className="w-4 h-4" /> Đăng xuất
               </button>
             </div>
           ) : (
-            <button
-              onClick={() => { openAuthModal('login'); onClose(); }}
-              className="w-full bg-primary text-white py-2.5 rounded-lg font-semibold text-sm"
-            >
+            <button onClick={() => { openAuthModal('login'); onClose(); }}
+              className="w-full bg-primary text-white py-2.5 rounded-lg font-semibold text-sm">
               Đăng nhập / Đăng ký
             </button>
           )}
@@ -412,6 +374,8 @@ const MobileMenu = ({ open, onClose }: { open: boolean; onClose: () => void }) =
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { isAuthenticated } = useAuthStore();
+  const clearCart = useCartStore((s) => s.clearCart);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
@@ -419,14 +383,9 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  const { isAuthenticated } = useAuthStore();
-  const clearCart = useCartStore((s) => s.clearCart);
-  const addItem = useCartStore((s) => s.addItem);
-
   useEffect(() => {
     clearCart();
     if (!isAuthenticated) return;
-
     cartService.getCart().then((cart) => {
       useCartStore.setState({
         items: cart.cartItems.map((item: any) => ({
@@ -446,58 +405,33 @@ const Header = () => {
   return (
     <>
       <PromoBar />
-      <header
-        className={cn(
-          'sticky top-0 z-40 bg-white transition-shadow duration-200',
-          scrolled && 'shadow-md'
-        )}
-      >
+      <header className={cn('sticky top-0 z-40 bg-white transition-shadow duration-200', scrolled && 'shadow-md')}>
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4">
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="lg:hidden p-2 rounded-lg text-mid-gray hover:bg-gray-100 transition-colors"
-          >
+          <button onClick={() => setMobileOpen(true)}
+            className="lg:hidden p-2 rounded-lg text-mid-gray hover:bg-gray-100 transition-colors">
             <Menu className="w-5 h-5" />
           </button>
-
-          {/* Logo */}
-          <Link
-            href="/"
-            className="font-head font-bold text-2xl text-primary shrink-0 tracking-tight"
-          >
+          <Link href="/" className="font-head font-bold text-2xl text-primary shrink-0 tracking-tight">
             ShopNow
           </Link>
-
-          {/* Search bar — hidden on mobile */}
           <div className="hidden md:flex flex-1">
             <SearchBar />
           </div>
-
-          {/* Right actions */}
           <div className="flex items-center gap-2 ml-auto">
-            {/* Search icon — mobile only */}
-            <button
-              className="md:hidden p-2 rounded-lg text-mid-gray hover:bg-gray-100 transition-colors"
-              onClick={useUIStore.getState().openSearchModal}
-            >
+            <button className="md:hidden p-2 rounded-lg text-mid-gray hover:bg-gray-100 transition-colors"
+              onClick={useUIStore.getState().openSearchModal}>
               <Search className="w-5 h-5" />
             </button>
-
             <DarkModeToggle />
             <WishlistButton />
             <CartButton />
             <UserMenu />
           </div>
         </div>
-
-        {/* Category nav — desktop */}
         <div className="hidden lg:block">
           <CategoryNav />
         </div>
       </header>
-
-      {/* Mobile menu */}
       <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} />
     </>
   );

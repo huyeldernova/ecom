@@ -3,6 +3,7 @@ package com.example.fileservice.service;
 import com.example.fileservice.dto.FileResponse;
 import com.example.fileservice.dto.S3Properties;
 import com.example.fileservice.entity.FileRecord;
+import com.example.fileservice.entity.MediaType;
 import com.example.fileservice.entity.Status;
 import com.example.fileservice.entity.TargetType;
 import com.example.fileservice.repository.FileRepository;
@@ -41,16 +42,27 @@ public class FileService {
 
             String s3Key = null;
             try {
-                s3Key = generateS3Key(file.getOriginalFilename());
-                uploadToS3(s3Key, file);
+                s3Key = generateS3Key(file.getContentType(), file.getOriginalFilename());
 
                 String url = buildUrl(s3Key);
+
+                MediaType mediaType = detectMediaType(file.getContentType());
+
+                String thumbnailUrl = null;
+                if (mediaType == MediaType.VIDEO) {
+                    // Video chưa có thumbnail tự động
+                    // thumbnailUrl có thể set sau khi generate thumbnail
+                    // Hiện tại để null, client tự handle
+                    thumbnailUrl = null;
+                }
 
                 FileRecord record = FileRecord.builder()
                         .name(file.getOriginalFilename())
                         .url(url)
+                        .thumbnailUrl(thumbnailUrl)
                         .contentType(file.getContentType())
                         .size(file.getSize())
+                        .mediaType(mediaType)
                         .uploadedBy(uploadedBy)
                         .build();
 
@@ -162,20 +174,22 @@ public class FileService {
         }
     }
 
-    private String generateS3Key(String originalFilename) {
-        return "temp/" + UUID.randomUUID() + "_" + originalFilename;
-    }
+    private String generateS3Key(String contentType, String originalFilename) {
+        String extension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
 
-    private void uploadToS3(String s3Key, MultipartFile file) throws IOException {
-        PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(s3Properties.getBucketName())
-                .key(s3Key)
-                .contentType(file.getContentType())
-                .contentLength(file.getSize())
-                .build();
+        String folder;
+        if (contentType != null && contentType.startsWith("image/")) {
+            folder = "images";
+        } else if (contentType != null && contentType.startsWith("video/")) {
+            folder = "videos";
+        } else {
+            folder = "files";
+        }
 
-        s3Client.putObject(request,
-                RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        return folder + "/" + UUID.randomUUID() + extension;
     }
 
     private String buildUrl(String s3Key) {
@@ -204,11 +218,20 @@ public class FileService {
                 .id(record.getId())
                 .name(record.getName())
                 .url(record.getUrl())
+                .thumbnailUrl(record.getThumbnailUrl())
+                .mediaType(record.getMediaType() != null ? record.getMediaType().name() : null)
                 .contentType(record.getContentType())
                 .size(record.getSize())
                 .targetType(record.getTargetType())
                 .targetId(record.getTargetId())
                 .createdAt(record.getCreatedAt())
                 .build();
+    }
+
+    private MediaType detectMediaType(String contentType) {
+        if (contentType == null) return MediaType.FILE;
+        if (contentType.startsWith("image/")) return MediaType.IMAGE;
+        if (contentType.startsWith("video/")) return MediaType.VIDEO;
+        return MediaType.FILE;
     }
 }

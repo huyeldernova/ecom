@@ -337,12 +337,11 @@ const ProductInfoForm = ({ form, setForm }: { form: ProductPayload; setForm: any
     }
 
     setUploading(true);
-    try {
-      // Gọi POST /product/api/v1/files  →  multipart/form-data  key = "files"
-      const result = await productAdminService.uploadFiles([file]);
-      const s3Url  = result[0].url; // URL thật trên S3
-      setForm((f: any) => ({ ...f, thumbnailUrl: s3Url }));
-      toast.success('Upload ảnh thành công!');
+        try {
+          const result = await productAdminService.uploadFiles([file]);
+          const { url, id } = result[0];
+          setForm((f: any) => ({ ...f, thumbnailUrl: url, fileIds: [id] })); //
+          toast.success('Upload ảnh thành công!');
     } catch {
       toast.error('Upload ảnh thất bại. Vui lòng thử lại.');
     } finally {
@@ -364,7 +363,7 @@ const ProductInfoForm = ({ form, setForm }: { form: ProductPayload; setForm: any
     if (file) handleUpload(file);
   };
 
-  const clearThumbnail = () => setForm((f: any) => ({ ...f, thumbnailUrl: '' }));
+  const clearThumbnail = () => setForm((f: any) => ({ ...f, thumbnailUrl: '', fileIds: [] }));
 
   return (
     <div className="space-y-4">
@@ -651,7 +650,7 @@ export default function AdminProductsPage() {
   const [modalParentId, setModalParentId] = useState<string | null>(null);
   const [product, setProduct] = useState<ProductPayload>({
     name: '', brand: '', price: 0, categoryId: '',
-    description: '', thumbnailUrl: '', variants: [],
+    description: '', thumbnailUrl: '', fileIds: [], variants: [],
   });
   const [variants, setVariants] = useState<VariantPayload[]>([]);
   const [saving, setSaving]     = useState(false);
@@ -703,7 +702,7 @@ export default function AdminProductsPage() {
       // Reset toàn bộ form
       setStep(1);
       setSelRoot(null); setSelSub(null);
-      setProduct({ name: '', brand: '', price: 0, categoryId: '', description: '', thumbnailUrl: '', variants: [] });
+      setProduct({ name: '', brand: '', price: 0, categoryId: '', description: '', thumbnailUrl: '', fileIds: [], variants: [] });
       setVariants([]);
     } catch {
       toast.error('Tạo sản phẩm thất bại');
