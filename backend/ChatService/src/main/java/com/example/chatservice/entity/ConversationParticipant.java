@@ -30,6 +30,9 @@ public class ConversationParticipant {
     @Column(name = "username")
     private String username;
 
+    @Column(name = "last_read_at")
+    private LocalDateTime lastReadAt;
+
     @Column(name = "joined_at", nullable = false)
     @Builder.Default
     private LocalDateTime joinedAt = LocalDateTime.now();

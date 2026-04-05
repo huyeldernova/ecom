@@ -2,16 +2,14 @@ package com.example.chatservice.service;
 
 
 import com.example.chatservice.dto.request.ConversationCreationRequest;
-import com.example.chatservice.dto.response.ConversationCreationResponse;
-import com.example.chatservice.dto.response.ConversationDetailResponse;
-import com.example.chatservice.dto.response.PageResponse;
-import com.example.chatservice.dto.response.ParticipantInfo;
+import com.example.chatservice.dto.response.*;
 import com.example.chatservice.entity.Conversation;
 import com.example.chatservice.entity.ConversationParticipant;
 import com.example.chatservice.entity.ConversationStatus;
 import com.example.chatservice.entity.ConversationType;
 import com.example.chatservice.exception.AppException;
 import com.example.chatservice.exception.ErrorCode;
+import com.example.chatservice.repository.ConversationParticipantRepository;
 import com.example.chatservice.repository.ConversationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,6 +33,7 @@ public class ConversationService {
     private final ConversationRepository conversationRepository;
     private final AdminRoutingService adminRoutingService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ConversationParticipantRepository conversationParticipantRepository;
 
     public ConversationCreationResponse createConversation(String requesterId, String requesterUsername, ConversationCreationRequest request) {
 
@@ -213,6 +213,37 @@ public class ConversationService {
         }
 
         return toCreationResponse(conversation, userId);
+    }
+
+    @Transactional
+    public void markAsRead(String userId, String conversationId){
+        ConversationParticipant participant = conversationParticipantRepository.findByUserIdAndConversationId(UUID.fromString(userId), UUID.fromString(conversationId))
+                .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND));
+
+        participant.setLastReadAt(LocalDateTime.now());
+        conversationParticipantRepository.save(participant);
+
+        ReadReceiptResponse response = ReadReceiptResponse.builder()
+                .userId(userId)
+                .conversationId(UUID.fromString(conversationId))
+                .lastReadAt(participant.getLastReadAt())
+                .build();
+
+        List<String> recipientIds = participant.getConversation().getParticipants()
+                .stream()
+                .filter(p -> !p.getUserId().equals(UUID.fromString(userId)))
+                .map(p -> p.getUserId().toString())
+                .toList();
+
+        for (String recipientId : recipientIds) {
+            messagingTemplate.convertAndSendToUser(
+                    recipientId,
+                    "/queue/read-receipt",
+                    response
+            );
+        }
+
+        log.info("User {} marked conversation {} as read", userId, conversationId);
     }
 
     public List<ConversationDetailResponse> getPendingSupport() {
