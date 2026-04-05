@@ -1,8 +1,10 @@
 package com.example.chatservice.controller;
 
 import com.example.chatservice.dto.request.ChatMessageRequest;
+import com.example.chatservice.dto.request.TypingRequest;
 import com.example.chatservice.exception.AppException;
 import com.example.chatservice.service.ChatService;
+import com.example.chatservice.service.TypingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -19,6 +21,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final TypingService typingService;
 
     @MessageMapping("/chat")
     public void handleChat(@Payload ChatMessageRequest request, Principal principal) {
@@ -51,6 +54,25 @@ public class ChatController {
             log.error("Unexpected error for user {}", senderId, ex);
             messagingTemplate.convertAndSendToUser(
                     senderId, "/queue/errors", "Internal server error");
+        }
+    }
+
+    @MessageMapping("/chat.typing")
+    public void handleTyping(@Payload TypingRequest request, Principal principal) {
+
+        if (principal == null) {
+            log.warn("Anonymous typing event — rejected");
+            return;
+        }
+
+        String userId = principal.getName();
+
+        try {
+            typingService.handleTyping(userId, request);
+        } catch (AppException ex) {
+            log.warn("Typing error for user {}: {}", userId, ex.getMessage());
+        } catch (Exception ex) {
+            log.error("Unexpected typing error for user {}", userId, ex);
         }
     }
 }
