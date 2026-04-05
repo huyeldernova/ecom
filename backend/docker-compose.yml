@@ -29,7 +29,7 @@ services:
     networks:
       - shopnow-network
 
-
+#
 
   redis:
     image: redis:7-alpine
