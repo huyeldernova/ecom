@@ -15,7 +15,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
-      - kafka-network
+      - shopnow-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -27,10 +27,24 @@ services:
     depends_on:
       - kafka
     networks:
-      - kafka-network
+      - shopnow-network
 
+#
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --appendfsync everysec
+    volumes:
+      - redis_data:/data
+    networks:
+      - shopnow-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
 
 networks:
-  kafka-network:
+  shopnow-network:
     driver: bridge

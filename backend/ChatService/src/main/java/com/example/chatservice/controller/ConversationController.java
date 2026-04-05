@@ -102,4 +102,19 @@ public class ConversationController {
                 .data(result)
                 .build();
     }
+
+    @PostMapping("/{conversationId}/read")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    public ApiResponses<Void> markAsRead(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable String conversationId) {
+
+        String userId = jwt.getSubject();
+        conversationService.markAsRead(userId, conversationId);
+
+        return ApiResponses.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Marked as read successfully")
+                .build();
+    }
 }

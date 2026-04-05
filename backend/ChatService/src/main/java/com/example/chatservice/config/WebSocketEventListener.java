@@ -10,6 +10,7 @@ import com.example.chatservice.service.ConversationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -34,7 +36,7 @@ public class WebSocketEventListener {
     private final SimpMessagingTemplate messagingTemplate;
     private final ConversationRepository conversationRepository;
     private final AdminRoutingService adminRoutingService;
-    private final ConversationService conversationService;
+    private final RedisTemplate<String, String> redisTemplate;
 
 
     @EventListener
@@ -147,11 +149,16 @@ public class WebSocketEventListener {
 
         List<SocketSession> remaining = socketSessionRepository.findByUserId(userId);
 
+
+
         if (remaining.isEmpty()) {
+            LocalDateTime lastSeenAt =LocalDateTime.now();
+            redisTemplate.opsForValue().set("last_seen:" + userId, lastSeenAt.toString(), 30, TimeUnit.DAYS);
             messagingTemplate.convertAndSend("/topic/online-status",
                     OnlineStatusResponse.builder()
                             .userId(userId)
                             .online(false)
+                            .lastSeenAt(lastSeenAt)
                             .build());
             log.info("User {} is now offline", userId);
 
