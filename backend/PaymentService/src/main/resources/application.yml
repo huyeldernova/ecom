@@ -4,6 +4,13 @@ server:
     context-path: /payment
 
 spring:
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
   application:
     name: payment-service
 
@@ -25,7 +32,6 @@ spring:
 jwt:
   secret-key: 298d452efb93a5b2eb1005d0bec28a1cc90d4b51ab055e32499119fbe606a61e9f9a8f0f
 
-#
 
 internal:
   api-key: super-secret-internal-key-123

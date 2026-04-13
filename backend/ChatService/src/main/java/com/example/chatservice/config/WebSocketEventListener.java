@@ -42,8 +42,8 @@ public class WebSocketEventListener {
     @EventListener
     @Transactional
     public void onConnected(SessionConnectEvent event) {
+        // 1. Lấy thông tin từ STOMP frame
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-
         String sessionId = accessor.getSessionId();
         String userId    = accessor.getUser() != null ? accessor.getUser().getName() : null;
 
@@ -72,7 +72,7 @@ public class WebSocketEventListener {
             username = auth.getDetails() != null ? auth.getDetails().toString() : userId;
         }
 
-        // Save session vào Redis
+        // 2. Lưu session vào Redis
         SocketSession session = SocketSession.builder()
                 .socketSessionId(sessionId)
                 .userId(userId)
@@ -82,6 +82,7 @@ public class WebSocketEventListener {
                 .build();
         socketSessionRepository.save(session);
 
+        // 3. Broadcast online status
         messagingTemplate.convertAndSend("/topic/online-status",
                 OnlineStatusResponse.builder()
                         .userId(userId)
@@ -107,7 +108,7 @@ public class WebSocketEventListener {
                     break;
                 }
 
-                // ✅ Kiểm tra admin đã là participant chưa
+                // Kiểm tra admin đã là participant chưa
                 boolean alreadyParticipant = conv.getParticipants().stream()
                         .anyMatch(p -> p.getUserId().equals(UUID.fromString(userId)));
 
@@ -149,10 +150,8 @@ public class WebSocketEventListener {
 
         List<SocketSession> remaining = socketSessionRepository.findByUserId(userId);
 
-
-
         if (remaining.isEmpty()) {
-            LocalDateTime lastSeenAt =LocalDateTime.now();
+            LocalDateTime lastSeenAt = LocalDateTime.now();
             redisTemplate.opsForValue().set("last_seen:" + userId, lastSeenAt.toString(), 30, TimeUnit.DAYS);
             messagingTemplate.convertAndSend("/topic/online-status",
                     OnlineStatusResponse.builder()

@@ -62,6 +62,10 @@ public class GatewayRouterConfiguration {
                 .route(r -> r.path("/chat-service/ws/**")
                         .uri("ws://localhost:8088"))
 
+                .route(r -> r
+                        .path("/notification//**")
+                        .uri("http://localhost:8089"))
+
                 .build();
     }
 }
