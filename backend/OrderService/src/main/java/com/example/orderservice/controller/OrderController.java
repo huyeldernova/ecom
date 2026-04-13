@@ -77,11 +77,13 @@ public class OrderController {
 
         UUID userId = UUID.fromString(jwt.getSubject());
         String token = "Bearer " + jwt.getTokenValue();
+        String email = jwt.getClaimAsString("email");
+
 
         return ApiResponses.<OrderResponse>builder()
                 .code(200)
                 .message("Checkout success")
-                .data(orderService.checkout(id, userId, token))
+                .data(orderService.checkout(id, userId, token, email))
                 .build();
     }
 

@@ -1,0 +1,48 @@
+server:
+  port: 8089
+  servlet:
+    context-path: /notification
+
+spring:
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: huy28719997@gmail.com
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+  application:
+    name: notification-service
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ecommerce_notification
+    username: root
+    password: 123456
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+jwt:
+  secret-key: "298d452efb93a5b2eb1005d0bec28a1cc90d4b51ab055e32499119fbe606a61e9f9a8f0f"
+

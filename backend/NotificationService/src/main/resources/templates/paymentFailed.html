@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Thanh toán thất bại</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #F5F5F5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
+        .wrapper { max-width: 580px; margin: 32px auto; }
+        .card { background: #FFFFFF; border-radius: 12px; overflow: hidden; border: 1px solid #E8E8E8; }
+        .header { padding: 36px 40px 28px; text-align: center; }
+        .logo { font-size: 22px; font-weight: 600; color: #1A1A1A; letter-spacing: -0.4px; margin-bottom: 24px; }
+        .icon-circle { width: 60px; height: 60px; border-radius: 50%; background: #FCEBEB; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .icon-circle svg { width: 30px; height: 30px; }
+        .title { font-size: 22px; font-weight: 600; color: #1A1A1A; margin-bottom: 8px; }
+        .subtitle { font-size: 14px; color: #6B6B6B; }
+        .body { padding: 0 40px 32px; }
+        .greeting { font-size: 15px; color: #3A3A3A; margin-bottom: 12px; }
+        .description { font-size: 14px; color: #6B6B6B; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { background: #F7F7F7; border-radius: 8px; padding: 18px; margin-bottom: 20px; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #EBEBEB; font-size: 14px; }
+        .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .info-row:first-child { padding-top: 0; }
+        .info-label { color: #6B6B6B; }
+        .info-value { color: #1A1A1A; font-weight: 600; }
+        .status-badge { background: #FCEBEB; color: #A32D2D; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .alert-box { background: #FCEBEB; border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; }
+        .alert-box p { font-size: 13px; color: #A32D2D; line-height: 1.6; }
+        .alert-box ul { margin: 8px 0 0 18px; }
+        .alert-box ul li { font-size: 13px; color: #A32D2D; line-height: 1.8; }
+        .cta-btn { display: block; text-align: center; padding: 14px; background: #FCEBEB; color: #A32D2D; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; margin-bottom: 20px; }
+        .note { font-size: 13px; color: #9B9B9B; text-align: center; line-height: 1.6; }
+        .footer { background: #F7F7F7; border-top: 1px solid #EBEBEB; padding: 18px 40px; text-align: center; }
+        .footer p { font-size: 12px; color: #9B9B9B; line-height: 1.7; }
+        .footer a { color: #A32D2D; text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="card">
+
+        <div class="header">
+            <div class="logo">ShopNow</div>
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z" fill="#A32D2D"/>
+                </svg>
+            </div>
+            <p class="title">Thanh toán thất bại</p>
+            <p class="subtitle">Đơn hàng của bạn chưa được xử lý</p>
+        </div>
+
+        <div class="body">
+            <p class="greeting">Xin chào <strong th:text="${name}">Nguyen Van A</strong>,</p>
+            <p class="description">
+                Rất tiếc, thanh toán cho đơn hàng của bạn không thành công.
+                Dưới đây là thông tin chi tiết:
+            </p>
+
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="info-label">Mã đơn hàng</span>
+                    <span class="info-value" th:text="'#' + ${orderId}">ABC-12345</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Số tiền</span>
+                    <span class="info-value">
+                        <span th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')}">500,000</span>
+                        <span th:text="${currency}">VNĐ</span>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Trạng thái</span>
+                    <span class="status-badge">Thất bại</span>
+                </div>
+            </div>
+
+            <div class="alert-box">
+                <p>Vui lòng kiểm tra lại các thông tin sau:</p>
+                <ul>
+                    <li>Số dư tài khoản / thẻ</li>
+                    <li>Thông tin thẻ (số thẻ, ngày hết hạn, CVV)</li>
+                    <li>Giới hạn giao dịch hàng ngày</li>
+                </ul>
+            </div>
+
+            <a href="#" class="cta-btn">Thử thanh toán lại</a>
+            <p class="note">Nếu vấn đề vẫn tiếp tục, hãy liên hệ <a href="mailto:support@shopnow.com" style="color:#A32D2D;">support@shopnow.com</a></p>
+        </div>
+
+        <div class="footer">
+            <p>
+                &copy; 2026 ShopNow &nbsp;|&nbsp;
+                <a href="#">shopnow.com</a> &nbsp;|&nbsp;
+                <a href="#">Hủy đăng ký nhận email</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

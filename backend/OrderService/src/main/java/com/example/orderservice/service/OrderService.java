@@ -181,7 +181,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse checkout(UUID orderId, UUID userId, String token) {
+    public OrderResponse checkout(UUID orderId, UUID userId, String token, String email) {
 
         Order order = orderRepository.findByIdAndUserId(orderId, userId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
@@ -192,6 +192,7 @@ public class OrderService {
 
         PaymentRequest paymentRequest = PaymentRequest.builder()
                 .orderId(order.getId())
+                .email(email)
                 .amount(order.getTotalAmount().longValue())
                 .currency("vnd")
                 .build();

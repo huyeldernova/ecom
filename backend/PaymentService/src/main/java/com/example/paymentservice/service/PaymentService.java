@@ -74,6 +74,7 @@ public class PaymentService {
             Payment payment = Payment.builder()
                     .orderId(request.getOrderId())
                     .userId(userId)
+                    .email(request.getEmail())
                     .paymentIntentId(intent.getId())
                     .status(PaymentStatus.PENDING)
                     .amount(request.getAmount())
