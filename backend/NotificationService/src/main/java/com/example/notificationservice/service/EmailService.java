@@ -77,4 +77,22 @@ public class EmailService {
 
         sendEmail(to, "Thanh toán thất bại - Đơn hàng #" + orderId, "email/payment-failed", context);
     }
+
+    // OTP xác thực email khi đăng ký
+    public void sendVerificationOtp(String to, String firstName, String otp) {
+        Context context = new Context();
+        context.setVariable("firstName", firstName);
+        context.setVariable("otp", otp);
+
+        sendEmail(to, "Xác thực email ShopNow — mã OTP của bạn", "email/otp-verification", context);
+    }
+
+    // OTP reset password
+    public void sendPasswordResetOtp(String to, String firstName, String otp) {
+        Context context = new Context();
+        context.setVariable("firstName", firstName);
+        context.setVariable("otp", otp);
+
+        sendEmail(to, "Đặt lại mật khẩu ShopNow — mã OTP của bạn", "email/otp-reset-password", context);
+    }
 }

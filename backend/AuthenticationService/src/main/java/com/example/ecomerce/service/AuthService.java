@@ -35,7 +35,11 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) throws JOSEException {
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+        // authenticationManager tự check: password, enabled, locked, expired
+        // Nếu enabled=false → throw DisabledException → GlobalExceptionHandler bắt
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
         User user = (User) authentication.getPrincipal();
@@ -44,9 +48,9 @@ public class AuthService {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getEmail(), authorities);
+        String accessToken  = jwtService.generateAccessToken(
+                user.getId().toString(), user.getEmail(), authorities);
         String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
-
 
         return LoginResponse.builder()
                 .accessToken(accessToken)

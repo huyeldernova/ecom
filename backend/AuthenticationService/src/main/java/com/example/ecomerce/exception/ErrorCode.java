@@ -22,7 +22,23 @@ public enum ErrorCode {
 
     USER_ALDREADY_SUCCESS(401,"user aldreaddy success", HttpStatus.BAD_REQUEST),
     UNAUTHORIZED(401, "UNAUTHORIZED", HttpStatus.UNAUTHORIZED),
-    ACCESS_DENIED(500, "ACCESS_DENIED", HttpStatus.BAD_REQUEST)
+    ACCESS_DENIED(500, "ACCESS_DENIED", HttpStatus.BAD_REQUEST),
+
+    // ── Email Verification
+    EMAIL_NOT_FOUND(400, "Email không tồn tại", HttpStatus.BAD_REQUEST),
+    EMAIL_ALREADY_VERIFIED(400, "Email đã được xác thực", HttpStatus.BAD_REQUEST),
+    ACCOUNT_NOT_VERIFIED(403, "Tài khoản chưa xác thực email", HttpStatus.FORBIDDEN),
+    VERIFICATION_TOKEN_NOT_FOUND(400, "OTP không hợp lệ", HttpStatus.BAD_REQUEST),
+    VERIFICATION_TOKEN_EXPIRED(400, "OTP đã hết hạn", HttpStatus.BAD_REQUEST),
+    VERIFICATION_TOKEN_USED(400, "OTP đã được sử dụng", HttpStatus.BAD_REQUEST),
+
+    // ── Password Reset
+    RESET_TOKEN_NOT_FOUND(400, "OTP không hợp lệ", HttpStatus.BAD_REQUEST),
+    RESET_TOKEN_EXPIRED(400, "OTP reset đã hết hạn", HttpStatus.BAD_REQUEST),
+
+    // ── Change Password
+    WRONG_OLD_PASSWORD(400, "Mật khẩu cũ không đúng", HttpStatus.BAD_REQUEST),
+    NEW_PASSWORD_SAME_AS_OLD(400, "Mật khẩu mới không được trùng mật khẩu cũ", HttpStatus.BAD_REQUEST),
 
     ;
 

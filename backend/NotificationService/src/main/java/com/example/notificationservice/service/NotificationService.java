@@ -3,6 +3,7 @@ package com.example.notificationservice.service;
 import com.example.event.PaymentFailedEvent;
 import com.example.event.PaymentSucceededEvent;
 import com.example.event.UserRegisteredEvent;
+import com.example.event.UserVerifiedEvent;
 import com.example.notificationservice.dto.PageResponse;
 import com.example.notificationservice.entity.Notification;
 import com.example.notificationservice.entity.NotificationType;
@@ -168,6 +169,27 @@ public class NotificationService {
 
         notification.setRead(true);
         notificationRepository.save(notification);
+    }
+
+
+    public void handleUserVerified(UserVerifiedEvent event) {
+        // Tạo NotificationUser nếu chưa có
+        boolean exists = notificationUserRepository
+                .findByUserId(event.getUserId()).isPresent();
+
+        if (!exists) {
+            notificationUserRepository.save(
+                    NotificationUser.builder()
+                            .userId(event.getUserId())
+                            .email(event.getEmail())
+                            .name(event.getName())
+                            .build()
+            );
+        }
+
+        // Gửi welcome email — đúng thời điểm: sau khi verify xong
+        emailService.sendWelcomeEmail(event.getEmail(), event.getName());
+        log.info("Welcome email sent for userId: {}", event.getUserId());
     }
 
     public long getUnreadCount(UUID userId) {

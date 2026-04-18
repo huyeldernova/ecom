@@ -4,6 +4,7 @@ package com.example.ecomerce.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -51,13 +52,13 @@ public class GlobalHandleException {
     }
 
 
-//    private ErrorResponse buildErrorCodeResponse(ErrorCode errorCode ,WebRequest request) {
-//        return ErrorResponse.builder()
-//                .timestamp(new Date())
-//                .code(errorCode.getCode())
-//                .message(errorCode.getMessage())
-//                .error(errorCode.getStatus().getReasonPhrase())
-//                .path(request.getDescription(false).replace("uri=", ""))
-//                .build();
-//    }
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorResponse> handleDisabledException(DisabledException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.builder()
+                        .code(ErrorCode.ACCOUNT_NOT_VERIFIED.getCode())
+                        .message(ErrorCode.ACCOUNT_NOT_VERIFIED.getMessage())
+                        .build());
+    }
 }
