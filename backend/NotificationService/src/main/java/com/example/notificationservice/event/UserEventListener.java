@@ -1,6 +1,7 @@
 package com.example.notificationservice.event;
 
 import com.example.event.UserRegisteredEvent;
+import com.example.event.UserVerifiedEvent;
 import com.example.notificationservice.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,15 +15,14 @@ import org.springframework.stereotype.Component;
 public class UserEventListener {
     private final NotificationService notificationService;
 
-    @KafkaListener(topics = "user.registered", groupId = "notification-service")
-    public void handleUserRegistered(UserRegisteredEvent event, Acknowledgment acknowledgment) {
-        log.info("Received user.registered for userId: {}", event.getUserId());
+    @KafkaListener(topics = "user.verified", groupId = "notification-service")
+    public void handleUserVerified(UserVerifiedEvent event, Acknowledgment ack) {
+        log.info("Received user.verified for userId: {}", event.getUserId());
         try {
-            notificationService.handleUserRegistered(event);
-            acknowledgment.acknowledge();
-            log.info("Offset committed for userId: {}", event.getUserId());
+            notificationService.handleUserVerified(event);
+            ack.acknowledge();
         } catch (Exception e) {
-            log.error("Failed to process user.registered for userId: {}", event.getUserId(), e);
+            log.error("Failed to handle user.verified: {}", event.getUserId(), e);
         }
     }
 }
